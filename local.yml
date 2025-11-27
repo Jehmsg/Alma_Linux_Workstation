@@ -15,11 +15,10 @@
   
   #INSTALL REPO
   #------------
-  - name: install houdini dependencies
+  - name: Install ELrepo
     yum:
      name: 
       - elrepo-release
-    state: present
 
   - name: Enable AlmaLinux CRB repo
     community.general.ini_file:
