@@ -16,7 +16,7 @@
   #INSTALL REPO
   #------------
   - name: install Elrepo
-    dnf:
+    yum:
      name: 
       - elrepo-release
     state: present
