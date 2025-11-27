@@ -79,3 +79,4 @@
   - name: Install Kitty
     yum:
      name: kitty
+     state: absent
