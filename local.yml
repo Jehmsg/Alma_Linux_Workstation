@@ -30,7 +30,7 @@
     when: ansible_distribution == "AlmaLinux"
 
   - name: Enable the RPM Fusion repository
-     ansible.builtin.dnf:
+     ansible.builtin.yum:
       name: "{{ item }}"
       state: present
       disable_gpg_check: true
