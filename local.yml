@@ -6,12 +6,19 @@
   
   tasks:
 
-  #UPGRADE
+  #UPGRADE/INSTALL
   #------------
+  - name: Install Nvidia
+    yum:
+     name:
+      - almalinux-release-nvidia-driver
+      - nvidia-open-kmod
+      - nvidia-driver
+      
   - name: Upgrade all packages
     ansible.builtin.yum:
-      name: "*"
-      state: latest
+     name: "*"
+     state: latest
   
   #INSTALL REPO
   #------------
