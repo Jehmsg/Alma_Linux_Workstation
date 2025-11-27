@@ -5,6 +5,14 @@
   become: true
   
   tasks:
+
+  - name: Install Nvidia Drivers
+    dnf:
+     name:
+      - almalinux-release-nvidia-driver
+      - nvidia-open-kmod
+      - nvidia-driver
+
   - name: install houdini dependencies
     yum:
      name:
