@@ -9,7 +9,7 @@
   #UPGRADE/INSTALL
   #------------
   - name: Install Nvidia
-    yum:
+    dnf:
      name:
       - almalinux-release-nvidia-driver
       - nvidia-open-kmod
@@ -21,7 +21,7 @@
      state: present
 
   - name: install cuda driver
-    yum:
+    dnf:
      name:
       - nvidia-driver-cuda
       - cuda
