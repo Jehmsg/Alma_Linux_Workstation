@@ -6,22 +6,45 @@
   
   tasks:
 
+  #UPGRADE
+  #------------
+  - name: Upgrade all packages
+     become: true
+     ansible.builtin.dnf:
+      name: "*"
+      state: latest
+  
+  #INSTALL REPO
+  #------------
   - name: install Elrepo
     dnf:
      name: elrepo-release
+    state: present
 
-  - name: Enable CRB
-    community.general.dnf_config_manager:
-     name: crb
-     state: enabled
-     
-  - name: Ensure the appstream and zfs repositories are disabled
-    community.general.dnf_config_manager:
-     name:
-       - appstream
-       - zfs
-     state: disabled
+  - name: Enable CRB repository
+     become: true
+     command:
+      cmd: dnf config-manager --enable crb
   
+  - name: Enable the RPM Fusion repository
+     ansible.builtin.dnf:
+      name: "{{ item }}"
+      state: present
+      disable_gpg_check: true
+     loop:
+      - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+     become: true
+
+    - name: Add flathub flatpak repository remote to the user installation
+      community.general.flatpak_remote:
+        name: flathub
+        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+        state: present
+        method: user
+
+  #DOT FILES
+  #------------
   - name: setup DNS
     copy:
      src: Files/resolv.conf
@@ -29,6 +52,8 @@
      owner: root
      group: root
 
+  #PROGRAM DEPENDENCIES
+  #------------
   - name: install houdini dependencies
     yum:
      name:
