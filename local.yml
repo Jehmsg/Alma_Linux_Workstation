@@ -15,7 +15,7 @@
   
   #INSTALL REPO
   #------------
-  - name: install Elrepo
+  - name: install houdini dependencies
     yum:
      name: 
       - elrepo-release
