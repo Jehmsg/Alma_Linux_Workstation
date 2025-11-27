@@ -1,0 +1,77 @@
+---
+- name: Setup Machines
+  hosts: localhost
+  connection: local
+  become: true
+  
+  tasks:
+  - name: install houdini dependencies
+    yum:
+     name:
+      - alsa-lib
+      - cups-libs
+      - dbus-libs
+      - expat
+      - fontconfig
+      - glib2
+      - glibc
+      - libcurl
+      - libdrm
+      - libgcc
+      - libglvnd-egl
+      - libglvnd-glx
+      - libglvnd-opengl
+      - libICE
+      - libSM
+      - libstdc++
+      - libuuid
+      - libX11
+      - libX11-xcb
+      - libxcb
+      - libXcomposite
+      - libXdamage
+      - libXext
+      - libXfixes
+      - libXi
+      - libxkbcommon
+      - libxkbcommon-x11
+      - libxkbfile
+      - libXrandr
+      - libXrender
+      - libxshmfence
+      - libXt
+      - libXtst
+      - mesa-libGLU
+      - ncurses-libs
+      - nspr
+      - nss
+      - nss-util
+      - nxagent
+      - pciutils-libs
+      - xcb-util-cursor
+      - xcb-util-image
+      - xcb-util-keysyms
+      - xcb-util-renderutil
+      - xcb-util-wm
+     state: present
+     
+  - name: Install Cockpit & Dependencies
+    yum:
+     name:
+      - cockpit
+      - cockpit-storaged
+      - cockpit-shell
+      - samba-common-tools
+      - adcli
+      - sssd
+      - realmd
+      - oddjob
+      - oddjob-mkhomedir
+      - krb5-workstation
+     state: present
+  
+  - name: Enable Cockpit on launch
+    ansible.builtin.service:
+     name: cockpit
+     enabled: yes
+     state: started
