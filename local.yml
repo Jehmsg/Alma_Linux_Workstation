@@ -8,10 +8,10 @@
 
   #UPGRADE
   #------------
-  - name: Upgrade all packages
-     ansible.builtin.dnf:
-      name: "*"
-     state: latest
+  #- name: Upgrade all packages
+   #  ansible.builtin.dnf:
+    #  name: "*"
+     #state: latest
   
   #INSTALL REPO
   #------------
@@ -20,10 +20,14 @@
      name: elrepo-release
     state: present
 
-  - name: Enable CRB repository
-     become: true
-     command:
-      cmd: dnf config-manager --enable crb
+  - name: Enable AlmaLinux CRB repo
+    community.general.ini_file:
+     path:       /etc/yum.repos.d/almalinux-crb.repo
+     section:    crb
+     option:     enabled
+     value:      1
+     create:     no
+    when: ansible_distribution == "AlmaLinux"
   
   - name: Enable the RPM Fusion repository
      ansible.builtin.dnf:
