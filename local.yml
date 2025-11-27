@@ -8,10 +8,10 @@
 
   #UPGRADE
   #------------
-  #- name: Upgrade all packages
-   #  ansible.builtin.dnf:
-    #  name: "*"
-     #state: latest
+  - name: Upgrade all packages
+    ansible.builtin.yum:
+      name: "*"
+      state: latest
   
   #INSTALL REPO
   #------------
