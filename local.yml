@@ -15,6 +15,13 @@
      name: crb
      state: enabled
      
+  - name: Ensure the appstream and zfs repositories are disabled
+    community.general.dnf_config_manager:
+     name:
+       - appstream
+       - zfs
+     state: disabled
+  
   - name: setup DNS
     copy:
      src: Files/resolv.conf
