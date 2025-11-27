@@ -75,3 +75,7 @@
      name: cockpit
      enabled: yes
      state: started
+  
+  - name: Install Kitty
+    yum:
+     name: kitty
