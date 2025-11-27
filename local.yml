@@ -9,7 +9,6 @@
   #UPGRADE
   #------------
   - name: Upgrade all packages
-     become: true
      ansible.builtin.dnf:
       name: "*"
       state: latest
