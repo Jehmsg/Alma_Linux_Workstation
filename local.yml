@@ -10,6 +10,11 @@
     dnf:
      name: elrepo-release
 
+  - name: Enable CRB
+    community.general.dnf_config_manager:
+     name: crb
+     state: enabled
+     
   - name: setup DNS
     copy:
      src: Files/resolv.conf
