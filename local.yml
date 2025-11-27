@@ -29,15 +29,11 @@
      create:     no
     when: ansible_distribution == "AlmaLinux"
   
-  - name: Enable the RPM Fusion repository
-     ansible.builtin.dnf:
-      name: "{{ item }}"
-      state: present
-      disable_gpg_check: true
-     loop:
-      - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
-      - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
-     become: true
+  - name: Install RPM Fusion Repo
+    dnf:
+     name:
+      - --nogpgcheck https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+      - --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm
 
     - name: Add flathub flatpak repository remote to the user installation
       community.general.flatpak_remote:
