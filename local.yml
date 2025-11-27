@@ -1,6 +1,6 @@
 ---
 - name: Setup Machines
-  hosts: localhost
+  hosts: as-lon-lw-006
   connection: local
   become: true
   
