@@ -29,6 +29,15 @@
      create:     no
     when: ansible_distribution == "AlmaLinux"
 
+  - name: Enable the RPM Fusion repository
+     ansible.builtin.dnf:
+      name: "{{ item }}"
+      state: present
+      disable_gpg_check: true
+     loop:
+       - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
+       - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+      
   #DOT FILES
   #------------
   - name: setup DNS
