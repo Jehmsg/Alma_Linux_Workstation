@@ -6,12 +6,21 @@
   
   tasks:
 
-  - name: Install Nvidia Drivers
+  - name: install Elrepo
     dnf:
-     name:
-      - almalinux-release-nvidia-driver
-      - nvidia-open-kmod
-      - nvidia-driver
+     name: elrepo-release
+
+  - name: Ensure the crb repository is enabled
+    community.general.dnf_config_manager:
+     name: crb
+     state: enabled
+
+  - name: setup DNS
+    copy:
+     src: Files/resolv.conf
+     dest: /etc/resolv.conf
+     owner: root
+     group: root
 
   - name: install houdini dependencies
     yum:
@@ -83,8 +92,3 @@
      name: cockpit
      enabled: yes
      state: started
-  
-  - name: Install Kitty
-    yum:
-     name: kitty
-     state: absent
