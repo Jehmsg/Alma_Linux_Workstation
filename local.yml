@@ -7,20 +7,6 @@
   tasks:  
   #INSTALL REPO
   #------------
-  - name: Install ELrepo
-    yum:
-     name: 
-      - elrepo-release
-
-  - name: Enable AlmaLinux CRB repo
-    community.general.ini_file:
-     path:       /etc/yum.repos.d/almalinux-crb.repo
-     section:    crb
-     option:     enabled
-     value:      1
-     create:     no
-    when: ansible_distribution == "AlmaLinux"
-
   - name: Enable the RPM Fusion repository
     ansible.builtin.yum:
       name: "{{ item }}"
@@ -61,6 +47,13 @@
     copy:
      src: Files/resolv.conf
      dest: /etc/resolv.conf
+     owner: root
+     group: root
+
+  - name: ENV Variables
+    copy:
+     src: Files/profile
+     dest: /etc/profile
      owner: root
      group: root
 
