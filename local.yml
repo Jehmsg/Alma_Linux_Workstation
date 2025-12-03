@@ -58,7 +58,19 @@
      group: root
 
   #PROGRAM DEPENDENCIES
+
   #------------
+  - name: general dependencies
+    yum:
+     name:
+      - bash
+      - curl
+      - dbus
+      - perl
+      - git
+      - less
+
+
   - name: install houdini dependencies
     yum:
      name:
@@ -128,4 +140,4 @@
     ansible.builtin.service:
      name: cockpit
      enabled: yes
-     state: started
+     state: started 
