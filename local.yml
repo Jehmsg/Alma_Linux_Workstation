@@ -58,7 +58,6 @@
      group: root
 
   #PROGRAM DEPENDENCIES
-
   #------------
   - name: general dependencies
     yum:
@@ -69,7 +68,6 @@
       - perl
       - git
       - less
-
 
   - name: install houdini dependencies
     yum:
