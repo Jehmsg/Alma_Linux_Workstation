@@ -150,4 +150,4 @@
 
   - name: mv Gnome Shell extension Installer
     ansible.builtin.command:
-     cmd: "mv gnome-shell-extension-installer /usr/games/" 
+     cmd: "mv gnome-shell-extension-installer /usr/bin/" 
