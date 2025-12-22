@@ -57,19 +57,6 @@
      owner: root
      group: root
 
-  #Synology
-  #------------
-  - name: Create MNT point
-    ansible.builtin.command:
-     cmd: "sudo mkdir -p /mnt/aslon"
-
-  - name: Cred
-    copy:
-     src: Files/.smbcred
-     dest: /root/.smbcred
-     owner: root
-     group: root
-
   #PROGRAM DEPENDENCIES
   #------------
   - name: general dependencies
