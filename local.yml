@@ -57,6 +57,13 @@
      owner: root
      group: root
 
+  #Synology
+  #------------
+  - name: Create MNT point
+    ansible.builtin.command:
+     cmd: "sudo mkdir /mnt/testing"
+
+
   #PROGRAM DEPENDENCIES
   #------------
   - name: general dependencies
