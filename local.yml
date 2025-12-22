@@ -139,3 +139,15 @@
      name: cockpit
      enabled: yes
      state: started 
+
+  - name: Gnome Extensions
+    ansible.builtin.command:
+     cmd: "wget -O gnome-shell-extension-installer "https://github.com/brunelli/gnome-shell-extension-installer/raw/master/gnome-shell-extension-installer"
+  
+  - name: make executable
+    ansible.builtin.command:
+     cmd: "chmod +x gnome-shell-extension-installer"
+
+  - name: mv Gnome Shell extension Installer
+    ansible.builtin.command:
+     cmd: "mv gnome-shell-extension-installer /usr/bin/" 
