@@ -7,34 +7,34 @@
   tasks:  
   #INSTALL REPO
   #------------
-  - name: Enable the RPM Fusion repository
-    ansible.builtin.yum:
-      name: "{{ item }}"
-      state: present
-      disable_gpg_check: true
-    loop:
-       - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
-       - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+  #- name: Enable the RPM Fusion repository
+   # ansible.builtin.yum:
+    #  name: "{{ item }}"
+     # state: present
+      #disable_gpg_check: true
+    #loop:
+     #  - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
+      # - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
 
   #UPGRADE/INSTALL
   #------------
-  - name: Install Nvidia
-    dnf:
-     name:
-      - almalinux-release-nvidia-driver
-      - nvidia-open-kmod
-      - nvidia-driver
+  #- name: Install Nvidia
+   # dnf:
+    # name:
+     # - almalinux-release-nvidia-driver
+      #- nvidia-open-kmod
+      #- nvidia-driver
   
-  - name: Modprobe nvidia_drm
-    modprobe:
-     name: nvidia_drm
-     state: present
+  #- name: Modprobe nvidia_drm
+   # modprobe:
+    # name: nvidia_drm
+     #state: present
 
-  - name: install cuda driver
-    dnf:
-     name:
-      - nvidia-driver-cuda
-      - cuda
+  #- name: install cuda driver
+   # dnf:
+    # name:
+     # - nvidia-driver-cuda
+      #- cuda
       
   #- name: Upgrade all packages
    # ansible.builtin.yum:
