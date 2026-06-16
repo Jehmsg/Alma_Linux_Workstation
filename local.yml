@@ -189,7 +189,7 @@
       ansible.builtin.file:
         path: "{{ rez_download_dir }}/{{ rez_version }}.tar.gz"
         state: absent
-      when: not rez_download.skipped
+      
 
     - name: Create package cache directory with SGID
       ansible.builtin.file:
