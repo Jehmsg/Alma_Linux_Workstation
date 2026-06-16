@@ -38,6 +38,17 @@
       - kernel-ml
       - kernel-ml-devel
 
+  - name: Nvida Repo
+    dnf:
+     name: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/$(uname-m)/cuda-rhel8.repo'
+     state: present
+
+  #NVIDIA DRIVERS
+  #------------
+  #- name: install nvidia drivers
+    
+
+  
   #INSTALL KDE
   #------------
   - name: install KDE
