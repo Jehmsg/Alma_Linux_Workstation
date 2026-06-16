@@ -18,7 +18,7 @@
   #------------
   - name: Ensure the crb repository is enabled
     community.general.dnf_config_manager:
-     name: crb
+     name: powertools
      state: enabled
 
   - name: Ensure the epel repository is enabled
