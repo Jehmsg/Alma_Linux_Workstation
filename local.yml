@@ -65,7 +65,7 @@
       - ark
       - flatpak
       - gdb
-      - cfis-utils
+      - cifs-utils
 
   - name: install houdini dependencies
     dnf:
