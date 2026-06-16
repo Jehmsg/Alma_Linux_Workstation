@@ -164,7 +164,6 @@
       ansible.builtin.get_url:
         url: "{{ rez_download_url }}"
         dest: "{{ rez_download_dir }}/{{ rez_version }}.tar.gz"
-        checksum: sha256:https://github.com/AcademySoftwareFoundation/rez/releases/download/{{ rez_version }}/sha256sum.txt
         mode: "0644"
       register: rez_download
 
