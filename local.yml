@@ -22,6 +22,13 @@
         owner: root
         group: root
 
+    - name: ENV Variables
+      copy:
+        src: Files/bash_profile
+        dest: /etc/skel/.bash_profile
+        owner: root
+        group: root
+
     #REPO/KERNEL
     #------------
     - name: Ensure the crb repository is enabled
@@ -202,3 +209,5 @@
     - name: Install rez-pip plugin
       ansible.builtin.command:
         cmd: "{{ rez_dir }}/bin/python -m pip install rez-pip"
+
+    - name: setup bash profile
