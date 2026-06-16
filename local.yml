@@ -42,7 +42,7 @@
     ansible.builtin.yum_repository:
      name: cuda-rhel8.repo
      description: nvidia cuda repo
-     baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo'
+     baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/'
 
   #NVIDIA DRIVERS
   #------------
