@@ -134,6 +134,6 @@
   
   - name: Enable Cockpit on launch
     ansible.builtin.service:
-     name: cockpit
+     name: cockpit.socket
      enabled: yes
      state: started 
