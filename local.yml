@@ -40,7 +40,7 @@
 
   - name: Nvida Repo
     ansible.builtin.yum_repository:
-     name: cuda-rhel8.repo
+     name: cuda-rhel8
      description: nvidia cuda repo
      baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/'
 
