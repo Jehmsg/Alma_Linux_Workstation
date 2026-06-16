@@ -96,6 +96,7 @@
           - gdb
           - cifs-utils
           - nfs-utils
+          - redhat-lsb-core
 
     - name: install houdini dependencies
       dnf:
