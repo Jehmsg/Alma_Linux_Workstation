@@ -209,5 +209,3 @@
     - name: Install rez-pip plugin
       ansible.builtin.command:
         cmd: "{{ rez_dir }}/bin/python -m pip install rez-pip"
-
-    - name: setup bash profile
