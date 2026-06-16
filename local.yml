@@ -5,51 +5,8 @@
   become: true
   
   tasks:  
-  #INSTALL REPO
-  #------------
-  #- name: Enable the RPM Fusion repository
-   # ansible.builtin.yum:
-    #  name: "{{ item }}"
-     # state: present
-      #disable_gpg_check: true
-    #loop:
-     #  - https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
-      # - https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
-
-  #UPGRADE/INSTALL
-  #------------
-  #- name: Install Nvidia
-   # dnf:
-    # name:
-     # - almalinux-release-nvidia-driver
-      #- nvidia-open-kmod
-      #- nvidia-driver
-  
-  #- name: Modprobe nvidia_drm
-   # modprobe:
-    # name: nvidia_drm
-     #state: present
-
-  #- name: install cuda driver
-   # dnf:
-    # name:
-     # - nvidia-driver-cuda
-      #- cuda
-      
-  #- name: Upgrade all packages
-   # ansible.builtin.yum:
-    # name: "*"
-     #state: latest
-      
   #DOT FILES
   #------------
-  - name: setup DNS
-    copy:
-     src: Files/resolv.conf
-     dest: /etc/resolv.conf
-     owner: root
-     group: root
-
   - name: ENV Variables
     copy:
      src: Files/profile
@@ -57,10 +14,42 @@
      owner: root
      group: root
 
+  #REPO/KERNEL
+  #------------
+  - name: Ensure the crb repository is enabled
+    community.general.dnf_config_manager:
+     name: crb
+     state: enabled
+
+  - name: Ensure the epel repository is enabled
+    community.general.dnf_config_manager:
+     name: epel
+     state: enabled
+
+  - name: Elrepo
+    dnf:
+     name: 'https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm'
+     state: present
+
+  - name: install Kernel-ml
+    dnf:
+     enablerepo: elrepo-kernel
+     name:
+      - kernel-ml
+      - kernel-ml-devel
+
+  #INSTALL KDE
+  #------------
+  - name: install KDE
+    dnf:
+     name:
+      - '@KDE Plasma Workspaces'
+      - base-x
+
   #PROGRAM DEPENDENCIES
   #------------
   - name: general dependencies
-    yum:
+    dnf:
      name:
       - bash
       - curl
@@ -68,9 +57,18 @@
       - perl
       - git
       - less
+      - zsh
+      - python3.11
+      - htop
+      - btop
+      - firefox
+      - ark
+      - flatpak
+      - gdb
+      - cfis-utils
 
   - name: install houdini dependencies
-    yum:
+    dnf:
      name:
       - alsa-lib
       - cups-libs
@@ -120,7 +118,7 @@
      state: present
      
   - name: Install Cockpit & Dependencies
-    yum:
+    dnf:
      name:
       - cockpit
       - cockpit-storaged
@@ -139,15 +137,3 @@
      name: cockpit
      enabled: yes
      state: started 
-
-  - name: Gnome Extensions
-    ansible.builtin.command:
-     cmd: "wget -O gnome-shell-extension-installer 'https://github.com/brunelli/gnome-shell-extension-installer/raw/master/gnome-shell-extension-installer'"
-  
-  - name: make executable
-    ansible.builtin.command:
-     cmd: "chmod +x gnome-shell-extension-installer"
-
-  - name: mv Gnome Shell extension Installer
-    ansible.builtin.command:
-     cmd: "mv gnome-shell-extension-installer /usr/bin/" 
