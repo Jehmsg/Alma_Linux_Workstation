@@ -199,7 +199,5 @@
         mode: "2777"
 
     - name: Install rez-pip plugin
-      ansible.builtin.pip:
-        name: rez-pip
-        virtualenv: "{{ rez_dir }}"
-        virtualenv_python: python3.11
+      ansible.builtin.command:
+        cmd: "{{ rez_dir }}/bin/python -m pip install rez-pip"
