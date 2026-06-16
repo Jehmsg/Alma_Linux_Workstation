@@ -40,9 +40,13 @@
 
   - name: Nvida Repo
     ansible.builtin.yum_repository:
-     name: cuda-rhel8
+     name: cuda-rhel8-x86_64
      description: cuda-rhel8-x86_64
+     file: cuda-rhel8
      baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64'
+     gpgkey: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/D42D0685.pub'
+     enabled: true
+     gpgcheck: true
 
   #NVIDIA DRIVERS
   #------------
