@@ -39,9 +39,9 @@
       - kernel-ml-devel
 
   - name: Nvida Repo
-    dnf:
+    community.general.dnf_config_manager:
      name: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo'
-     state: present
+     state: enabled
 
   #NVIDIA DRIVERS
   #------------
