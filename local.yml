@@ -39,9 +39,10 @@
       - kernel-ml-devel
 
   - name: Nvida Repo
-    community.general.dnf_config_manager:
-     name: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo'
-     state: enabled
+    ansible.builtin.yum_repository:
+     name: cuda-rhel8
+     description: nvidia cuda repo
+     baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo'
 
   #NVIDIA DRIVERS
   #------------
