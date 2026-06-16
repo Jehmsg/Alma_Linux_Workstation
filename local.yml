@@ -202,3 +202,4 @@
       ansible.builtin.pip:
         name: rez-pip
         virtualenv: "{{ rez_dir }}"
+        virtualenv_python: python3.11
