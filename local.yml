@@ -200,6 +200,6 @@
         mode: "2777"
 
     - name: Install rez-pip plugin
-      community.general.pip:
+      ansible.builtin.pip:
         name: rez-pip
         virtualenv: "{{ rez_dir }}"
