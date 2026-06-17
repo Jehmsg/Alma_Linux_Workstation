@@ -73,7 +73,7 @@
     #NVIDIA DRIVERS
     #------------
     - name: module enable 580 nvidia drivers
-      shell: dnf module enable nvidia-drive:580-open
+      shell: dnf module enable nvidia-driver:580-open
 
     - name: install 580 drivers
       dnf:
