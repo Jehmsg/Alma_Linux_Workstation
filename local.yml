@@ -109,6 +109,7 @@
           - cifs-utils
           - nfs-utils
           - redhat-lsb-core
+          - rasdaemon
 
     - name: install houdini dependencies
       dnf:
@@ -180,7 +181,21 @@
         name: cockpit.socket
         enabled: yes
         state: started
+    
+    - name: disable mcelog
+      ansible.builtin.service:
+        name: mcelog.service
+        enabled: no
+        state: stopped
 
+    - name: Enable rasdaemon
+      ansible.builtin.service:
+        name: rasdaemon.service
+        enabled: yes
+        state: started
+
+    #REZ SETUP
+    #------------
     - name: Download Rez release archive
       ansible.builtin.get_url:
         url: "{{ rez_download_url }}"
@@ -209,8 +224,7 @@
     - name: Remove downloaded archive
       ansible.builtin.file:
         path: "{{ rez_download_dir }}/{{ rez_version }}.tar.gz"
-        state: absent
-      
+        state: absent     
 
     - name: Create package cache directory with SGID
       ansible.builtin.file:
