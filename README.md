@@ -12,7 +12,7 @@ On machines with RTX 5080 or 5090 GPUs, the Rocky Linux installer may hang or fa
 2. Find the line beginning with `linux` and append the following to the end:
 
 ```
-nomodeset rd.blacklist=nouveau
+nomodeset rd.driver.blacklist=nouveau
 ```
 
 3. Press **`Ctrl+X`** to boot with these options.
