@@ -65,7 +65,12 @@
 
     #NVIDIA DRIVERS
     #------------
-    #- name: install nvidia drivers
+    - name: module enable 580 nvidia drivers
+      shell: dnf module enable nvidia-drive:580-open
+
+    - name: install 580 drivers
+      dnf:
+        name: nvidia-open
 
     #INSTALL KDE
     #------------
