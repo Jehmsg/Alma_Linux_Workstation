@@ -22,10 +22,17 @@
         owner: root
         group: root
 
-    - name: ENV Variables
+    - name: set default user creation bash
       copy:
         src: Files/bash_profile
         dest: /etc/skel/.bash_profile
+        owner: root
+        group: root
+
+    - name: system wide umask
+      copy:
+        src: Files/umask.sh
+        dest: /etc/profile.d/umask.sh
         owner: root
         group: root
 
