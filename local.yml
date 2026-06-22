@@ -85,7 +85,7 @@
     #------------
     # - name: module enable 580 nvidia drivers
     #  shell: dnf module enable nvidia-driver:580-open -y
-    - name:
+    - name: enable 580 drivers 2
       dnf:
         name: '@nvidia-driver:580-open'
         state: present
