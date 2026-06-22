@@ -65,8 +65,8 @@
         name: cuda-rhel8-x86_64
         description: cuda-rhel8-x86_64
         file: cuda-rhel8
-        baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64'
-        gpgkey: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/D42D0685.pub'
+        baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64'
+        gpgkey: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/D42D0685.pub'
         enabled: true
         gpgcheck: true
 
