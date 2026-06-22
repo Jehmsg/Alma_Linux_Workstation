@@ -92,6 +92,12 @@
       dnf:
         name: dkms
 
+    - name: enable dkms autoinstall
+      ansible.builtin.lineinfile:
+        path: /etc/dkms/framework.conf
+        search_string: '# autoinstall_all_kernels=""'
+        line: 'autoinstall_all_kernels=""'
+
     #NVIDIA DRIVERS
     #------------
     # - name: module enable 580 nvidia drivers
@@ -104,12 +110,6 @@
     - name: install 580 drivers
       dnf:
         name: nvidia-open
-
-    - name: enable dkms autoinstall
-      ansible.builtin.lineinfile:
-        path: /etc/dkms/framework.conf
-        search_string: '# autoinstall_all_kernels=""'
-        line: 'autoinstall_all_kernels=""'
 
     #INSTALL KDE
     #------------
