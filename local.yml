@@ -49,6 +49,16 @@
         name: epel
         state: enabled
 
+    - name: Elrepo GPG KEY
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+
+    - name: Elrepo GPG KEY V2
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://www.elrepo.org/RPM-GPG-KEY-v2-elrepo.org
+
     - name: Elrepo
       dnf:
         name: 'https://www.elrepo.org/elrepo-release-{{ ansible_distribution_major_version }}.el{{ ansible_distribution_major_version }}.elrepo.noarch.rpm'
@@ -63,9 +73,9 @@
 
     - name: Nvida Repo
       ansible.builtin.yum_repository:
-        name: cuda-rhel8-x86_64
-        description: cuda-rhel8-x86_64
-        file: cuda-rhel8
+        name: cuda-rhel{{ ansible_distribution_major_version }}-x86_64
+        description: cuda-rhel{{ ansible_distribution_major_version }}-x86_64
+        file: cuda-rhel{{ ansible_distribution_major_version }}
         baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64'
         gpgkey: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/D42D0685.pub'
         enabled: true
