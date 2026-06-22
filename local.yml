@@ -88,6 +88,10 @@
         enabled: true
         gpgcheck: true
 
+    - name: Install dkms
+      dnf:
+        name: dkms
+
     #NVIDIA DRIVERS
     #------------
     # - name: module enable 580 nvidia drivers
