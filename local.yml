@@ -123,7 +123,6 @@
           - gdb
           - cifs-utils
           - nfs-utils
-          - redhat-lsb-core
           - rasdaemon
 
     - name: install houdini dependencies
