@@ -37,6 +37,13 @@
         owner: root
         group: root
 
+    - name: copy over rez.sh
+      copy: 
+        src: Files/rez.sh
+        dest: /etc/profile.d/rez.sh
+        owner: root
+        group: root
+
     #REPO/KERNEL
     #------------
     - name: Ensure the powertools repository is enabled
