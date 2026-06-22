@@ -44,6 +44,12 @@
         owner: root
         group: root
 
+    - name: enable dkms autoinstall
+      ansible.builtin.lineinfile:
+        path: /etc/dkms/framework.conf
+        search_string: '# autoinstall_all_kernels=""'
+        line: 'autoinstall_all_kernels=""'
+
     #REPO/KERNEL
     #------------
     - name: Ensure the powertools repository is enabled
