@@ -41,7 +41,7 @@
     #------------
     - name: Ensure the powertools repository is enabled
       community.general.dnf_config_manager:
-        name: {{  crb-powertools  }}
+        name: "{{  crb-powertools  }}"
         state: enabled
 
     - name: Ensure the epel repository is enabled
