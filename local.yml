@@ -11,6 +11,7 @@
     rez_group: Domain_Artists
     rez_download_url: "https://github.com/AcademySoftwareFoundation/rez/releases/download/{{ rez_version }}/{{ rez_version }}.tar.gz"
     rez_download_dir: /tmp
+    crb-powertools: "{{ 'powertools' if ansible_distribution_major_version == '8' else 'crb' }}"
 
   tasks:
     #DOT FILES
@@ -40,15 +41,8 @@
     #------------
     - name: Ensure the powertools repository is enabled
       community.general.dnf_config_manager:
-        name: powertools
+        name: {{  crb-powertools  }}
         state: enabled
-        when: ansible_distribution_major_version == "8"
-
-    - name: Ensure the powertools repository is enabled
-      community.general.dnf_config_manager:
-        name: crb
-        state: enabled
-        when: ansible_distribution_major_version == "9"
 
     - name: Ensure the epel repository is enabled
       community.general.dnf_config_manager:
