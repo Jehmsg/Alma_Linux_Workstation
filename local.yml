@@ -44,12 +44,6 @@
         owner: root
         group: root
 
-    - name: enable dkms autoinstall
-      ansible.builtin.lineinfile:
-        path: /etc/dkms/framework.conf
-        search_string: '# autoinstall_all_kernels=""'
-        line: 'autoinstall_all_kernels=""'
-
     #REPO/KERNEL
     #------------
     - name: Ensure the powertools repository is enabled
@@ -106,6 +100,12 @@
     - name: install 580 drivers
       dnf:
         name: nvidia-open
+
+    - name: enable dkms autoinstall
+      ansible.builtin.lineinfile:
+        path: /etc/dkms/framework.conf
+        search_string: '# autoinstall_all_kernels=""'
+        line: 'autoinstall_all_kernels=""'
 
     #INSTALL KDE
     #------------
