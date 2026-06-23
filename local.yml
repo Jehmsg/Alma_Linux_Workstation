@@ -66,18 +66,6 @@
         state: present
         key: https://www.elrepo.org/RPM-GPG-KEY-v2-elrepo.org
 
-    - name: Elrepo
-      dnf:
-        name: 'https://www.elrepo.org/elrepo-release-{{ ansible_distribution_major_version }}.el{{ ansible_distribution_major_version }}.elrepo.noarch.rpm'
-        state: present
-
-    - name: install Kernel-ml
-      dnf:
-        enablerepo: elrepo-kernel
-        name:
-          - kernel-ml
-          - kernel-ml-devel
-
     - name: Nvida Repo
       ansible.builtin.yum_repository:
         name: cuda-rhel{{ ansible_distribution_major_version }}-x86_64
@@ -113,6 +101,20 @@
     - name: install 580 drivers
       dnf:
         name: nvidia-open
+
+    #ELREPO KERNEL MT
+    #------------
+    - name: Elrepo
+      dnf:
+        name: 'https://www.elrepo.org/elrepo-release-{{ ansible_distribution_major_version }}.el{{ ansible_distribution_major_version }}.elrepo.noarch.rpm'
+        state: present
+
+    - name: install Kernel-ml
+      dnf:
+        enablerepo: elrepo-kernel
+        name:
+          - kernel-ml
+          - kernel-ml-devel
 
     #INSTALL KDE
     #------------
