@@ -76,23 +76,21 @@
         enabled: true
         gpgcheck: true
 
-    - name: Install dkms
-      dnf:
-        name: dkms
+    #- name: Install dkms
+    #  dnf:
+    #    name: dkms
 
-    - name: enable dkms autoinstall
-      ansible.builtin.lineinfile:
-        path: /etc/dkms/framework.conf
-        search_string: '# autoinstall_all_kernels=""'
-        line: 'autoinstall_all_kernels="1"'
+    #- name: enable dkms autoinstall
+    #  ansible.builtin.lineinfile:
+    #    path: /etc/dkms/framework.conf
+    #    search_string: '# autoinstall_all_kernels=""'
+    #    line: 'autoinstall_all_kernels="1"'
 
-    - name: apply dkms settings
-      shell: sudo dkms autoinstall
+    #- name: apply dkms settings
+    #  shell: sudo dkms autoinstall
 
     #NVIDIA DRIVERS
     #------------
-    # - name: module enable 580 nvidia drivers
-    #  shell: dnf module enable nvidia-driver:580-open -y
     - name: enable 580 drivers 2
       dnf:
         name: '@nvidia-driver:580-open'
