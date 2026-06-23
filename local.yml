@@ -122,6 +122,9 @@
           - '@KDE Plasma Workspaces'
           - '@base-x'
 
+    - name: graphical target
+      shell: sudo systemctl set-default graphical.target
+
     #PROGRAM DEPENDENCIES
     #------------
     - name: general dependencies
