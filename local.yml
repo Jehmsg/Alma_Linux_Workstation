@@ -96,7 +96,10 @@
       ansible.builtin.lineinfile:
         path: /etc/dkms/framework.conf
         search_string: '# autoinstall_all_kernels=""'
-        line: 'autoinstall_all_kernels=""'
+        line: 'autoinstall_all_kernels="1"'
+
+    - name: apply dkms settings
+      shell: sudo dkms autoinstall
 
     #NVIDIA DRIVERS
     #------------
