@@ -181,7 +181,7 @@ Each playbook declares only the vars it needs.
 
 ```bash
 ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git \
-  -i localhost, -c local -U --playbook site.yml
+  -i localhost, -c local -U site.yml
 ```
 
 ### Run a single playbook
@@ -189,11 +189,11 @@ ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git \
 ```bash
 # Re-apply only packages and services
 ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git \
-  -i localhost, -c local -U --playbook 04-packages.yml
+  -i localhost, -c local -U 04-packages.yml
 
 # Re-apply only Rez
 ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git \
-  -i localhost, -c local -U --playbook 05-rez.yml
+  -i localhost, -c local -U 05-rez.yml
 ```
 
 ### Verbose output

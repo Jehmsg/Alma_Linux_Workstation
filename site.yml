@@ -1,6 +1,6 @@
 ---
 # Orchestrator — runs all playbooks in order
-# Full bootstrap: ansible-pull -U <repo> --playbook site.yml
+# Full bootstrap: ansible-pull -U <repo> site.yml
 - import_playbook: 01-dotfiles.yml
 - import_playbook: 02-repos-kernel.yml
 - import_playbook: 03-desktop.yml

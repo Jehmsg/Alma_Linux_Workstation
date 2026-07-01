@@ -55,7 +55,7 @@ dnf install -y ansible git
 Run the following on the target machine as root (or with `sudo`):
 
 ```bash
-ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git --playbook site.yml
+ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git site.yml
 ```
 
 This will clone the repository and run all playbooks in order:
@@ -77,13 +77,13 @@ Re-run any individual stage without re-executing the full bootstrap:
 
 ```bash
 # Re-apply only packages and services
-ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git --playbook 04-packages.yml
+ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git 04-packages.yml
 
 # Re-apply only Rez
-ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git --playbook 05-rez.yml
+ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git 05-rez.yml
 
 # Re-apply only network/sysctl
-ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git --playbook 07-network.yml
+ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git 07-network.yml
 ```
 
 ### Verbose Output
