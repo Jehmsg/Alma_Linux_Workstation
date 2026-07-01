@@ -10,6 +10,7 @@
     rez_python_version: "python3.11"
     rez_download_url: "https://github.com/AcademySoftwareFoundation/rez/releases/download/{{ rez_version }}/{{ rez_version }}.tar.gz"
     rez_download_dir: /tmp
+    rez_group: Domain_Artists
 
   tasks:
     - name: Download Rez release archive
@@ -46,6 +47,7 @@
       ansible.builtin.file:
         path: "{{ rez_cache_dir }}"
         state: directory
+        group: "{{ rez_group }}"
         mode: '2777'
 
     - name: Install rez-pip plugin
