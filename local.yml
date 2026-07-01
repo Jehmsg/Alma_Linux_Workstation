@@ -75,20 +75,7 @@
         gpgkey: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/D42D0685.pub'
         enabled: true
         gpgcheck: true
-
-    #- name: Install dkms
-    #  dnf:
-    #    name: dkms
-
-    #- name: enable dkms autoinstall
-    #  ansible.builtin.lineinfile:
-    #    path: /etc/dkms/framework.conf
-    #    search_string: '# autoinstall_all_kernels=""'
-    #    line: 'autoinstall_all_kernels="1"'
-
-    #- name: apply dkms settings
-    #  shell: sudo dkms autoinstall
-
+        
     #NVIDIA DRIVERS
     #------------
     - name: enable 580 drivers 2
