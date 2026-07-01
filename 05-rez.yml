@@ -10,7 +10,7 @@
     rez_python_version: "python3.11"
     rez_download_url: "https://github.com/AcademySoftwareFoundation/rez/releases/download/{{ rez_version }}/{{ rez_version }}.tar.gz"
     rez_download_dir: /tmp
-    rez_group: Artists
+    rez_group: artists
 
   tasks:
     - name: Download Rez release archive
