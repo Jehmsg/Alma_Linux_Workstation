@@ -31,6 +31,12 @@
           - dejavu-fonts-all
         state: present
 
+    - name: Install ffmpeg from RPM Fusion
+      dnf:
+        name: ffmpeg
+        state: present
+        allow_erasing: yes
+
     - name: Install Houdini / DCC dependencies
       dnf:
         name:

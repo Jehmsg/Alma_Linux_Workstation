@@ -42,6 +42,16 @@
         name: 'https://www.elrepo.org/elrepo-release-{{ ansible_distribution_major_version }}.el{{ ansible_distribution_major_version }}.elrepo.noarch.rpm'
         state: present
 
+    - name: Install RPM Fusion free release
+      dnf:
+        name: "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+
+    - name: Install RPM Fusion nonfree release
+      dnf:
+        name: "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+
     - name: Install mainline kernel (kernel-ml)
       dnf:
         enablerepo: elrepo-kernel
