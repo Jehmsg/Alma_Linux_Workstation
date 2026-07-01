@@ -75,7 +75,7 @@
         gpgkey: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/D42D0685.pub'
         enabled: true
         gpgcheck: true
-        
+
     #NVIDIA DRIVERS
     #------------
     - name: enable 580 drivers 2
@@ -260,3 +260,38 @@
     - name: Install rez-pip plugin
       ansible.builtin.command:
         cmd: "{{ rez_dir }}/bin/python -m pip install rez-pip"
+
+    #SELINUX SETUP
+    #------------
+    - name: Install SELinux Python bindings
+      dnf:
+        name:
+          - python3-libselinux
+          - python3-libsemanage
+        state: present
+
+    - name: Set SELinux to permissive
+      ansible.posix.selinux:
+        policy: targeted
+        state: permissive
+
+    #SETUP NFS
+    #------------
+    - name: Create ASLON mount point
+      ansible.builtin.file:
+        path: /mnt/aslon
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+ 
+    - name: Mount ASLON NFS share
+      ansible.posix.mount:
+        path: /mnt/aslon
+        src: synology.alongsidegroup.com:/volume1/ASLON
+        fstype: nfs
+        # sec=sys used until UID/GID mapping between AD and Synology is resolved
+        # To switch to Kerberos once resolved, change sec=sys to sec=krb5p
+        opts: sec=sys,vers=4,rsize=1048576,wsize=1048576,_netdev,nofail,auto
+        state: mounted
+
