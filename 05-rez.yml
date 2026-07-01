@@ -1,0 +1,53 @@
+---
+- name: Install Rez Package Manager
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    rez_version: "3.4.0"
+    rez_dir: /opt/rez
+    rez_cache_dir: "{{ rez_dir }}/package_cache"
+    rez_python_version: "python3.11"
+    rez_download_url: "https://github.com/AcademySoftwareFoundation/rez/releases/download/{{ rez_version }}/{{ rez_version }}.tar.gz"
+    rez_download_dir: /tmp
+
+  tasks:
+    - name: Download Rez release archive
+      ansible.builtin.get_url:
+        url: "{{ rez_download_url }}"
+        dest: "{{ rez_download_dir }}/{{ rez_version }}.tar.gz"
+        mode: '0644'
+      register: rez_download
+
+    - name: Extract Rez archive
+      ansible.builtin.unarchive:
+        src: "{{ rez_download_dir }}/{{ rez_version }}.tar.gz"
+        dest: "{{ rez_download_dir }}"
+        remote_src: yes
+      register: rez_extract
+
+    - name: Install Rez using install.py
+      ansible.builtin.command:
+        cmd: "{{ rez_python_version }} {{ rez_download_dir }}/rez-{{ rez_version }}/install.py {{ rez_dir }}"
+      register: rez_install
+      changed_when: rez_install.rc == 0
+
+    - name: Remove extracted Rez directory
+      ansible.builtin.file:
+        path: "{{ rez_download_dir }}/rez-{{ rez_version }}"
+        state: absent
+
+    - name: Remove downloaded Rez archive
+      ansible.builtin.file:
+        path: "{{ rez_download_dir }}/{{ rez_version }}.tar.gz"
+        state: absent
+
+    - name: Create Rez package cache directory with SGID
+      ansible.builtin.file:
+        path: "{{ rez_cache_dir }}"
+        state: directory
+        mode: '2777'
+
+    - name: Install rez-pip plugin
+      ansible.builtin.command:
+        cmd: "{{ rez_dir }}/bin/python -m pip install rez-pip"

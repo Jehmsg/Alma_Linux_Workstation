@@ -1,0 +1,32 @@
+---
+- name: Configure Security & System Limits
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install SELinux Python bindings
+      dnf:
+        name:
+          - python3-libselinux
+          - python3-libsemanage
+        state: present
+
+    - name: Set SELinux to permissive
+      ansible.posix.selinux:
+        policy: targeted
+        state: permissive
+
+    - name: Deploy VFX system limits
+      ansible.builtin.copy:
+        dest: /etc/security/limits.d/vfx.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          * soft nofile 65536
+          * hard nofile 65536
+          * soft nproc 65536
+          * hard nproc 65536
+          * soft stack unlimited
+          * hard stack unlimited

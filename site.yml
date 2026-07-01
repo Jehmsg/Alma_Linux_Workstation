@@ -1,0 +1,11 @@
+---
+# Orchestrator — runs all playbooks in order
+# Full bootstrap: ansible-pull -U <repo> --playbook site.yml
+- import_playbook: 01-dotfiles.yml
+- import_playbook: 02-repos-kernel.yml
+- import_playbook: 03-desktop.yml
+- import_playbook: 04-packages.yml
+- import_playbook: 05-rez.yml
+- import_playbook: 06-security.yml
+- import_playbook: 07-network.yml
+- import_playbook: 08-tuned.yml

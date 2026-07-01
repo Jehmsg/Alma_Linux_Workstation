@@ -1,0 +1,57 @@
+---
+- name: Configure Network & Sysctl Tuning
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Create ASLON NFS mount point
+      ansible.builtin.file:
+        path: /mnt/aslon
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Mount ASLON NFS share
+      ansible.posix.mount:
+        path: /mnt/aslon
+        src: synology.alongsidegroup.com:/volume1/ASLON
+        fstype: nfs
+        opts: sec=sys,vers=4,rsize=1048576,wsize=1048576,_netdev,nofail,auto
+        state: mounted
+
+    - name: Set vm.max_map_count for VFX applications
+      ansible.posix.sysctl:
+        name: vm.max_map_count
+        value: '1048576'
+        state: present
+        reload: yes
+
+    - name: Set net.core.rmem_max for NFS performance
+      ansible.posix.sysctl:
+        name: net.core.rmem_max
+        value: '134217728'
+        state: present
+        reload: yes
+
+    - name: Set net.core.wmem_max for NFS performance
+      ansible.posix.sysctl:
+        name: net.core.wmem_max
+        value: '134217728'
+        state: present
+        reload: yes
+
+    - name: Set net.core.netdev_max_backlog
+      ansible.posix.sysctl:
+        name: net.core.netdev_max_backlog
+        value: '300000'
+        state: present
+        reload: yes
+
+    - name: Set kernel core dump pattern
+      ansible.posix.sysctl:
+        name: kernel.core_pattern
+        value: '/var/crash/core.%e.%p'
+        state: present
+        reload: yes

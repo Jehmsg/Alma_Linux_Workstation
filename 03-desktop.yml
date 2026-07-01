@@ -1,0 +1,18 @@
+---
+- name: Install Desktop Environment
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install KDE Plasma Workspaces
+      dnf:
+        name:
+          - '@KDE Plasma Workspaces'
+          - '@base-x'
+        state: present
+
+    - name: Set graphical target as default
+      ansible.builtin.command:
+        cmd: systemctl set-default graphical.target
+      changed_when: true

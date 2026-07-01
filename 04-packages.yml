@@ -1,0 +1,114 @@
+---
+- name: Install Packages & Configure Services
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install general dependencies
+      dnf:
+        name:
+          - bash
+          - curl
+          - dbus
+          - perl
+          - git
+          - less
+          - zsh
+          - python3.11
+          - htop
+          - btop
+          - firefox
+          - ark
+          - flatpak
+          - gdb
+          - cifs-utils
+          - nfs-utils
+          - rasdaemon
+          - liberation-fonts
+          - google-noto-fonts-common
+          - google-noto-sans-fonts
+          - dejavu-fonts-all
+        state: present
+
+    - name: Install Houdini / DCC dependencies
+      dnf:
+        name:
+          - alsa-lib
+          - cups-libs
+          - dbus-libs
+          - expat
+          - fontconfig
+          - glib2
+          - glibc
+          - libcurl
+          - libdrm
+          - libgcc
+          - libglvnd-egl
+          - libglvnd-glx
+          - libglvnd-opengl
+          - libICE
+          - libSM
+          - libstdc++
+          - libuuid
+          - libX11
+          - libX11-xcb
+          - libxcb
+          - libXcomposite
+          - libXdamage
+          - libXfixes
+          - libXi
+          - libxkbcommon
+          - libxkbcommon-x11
+          - libxkbfile
+          - libXrandr
+          - libXrender
+          - libxshmfence
+          - libXt
+          - libXtst
+          - mesa-libGLU
+          - ncurses-libs
+          - nspr
+          - nss
+          - nss-util
+          - nxagent
+          - pciutils-libs
+          - xcb-util-cursor
+          - xcb-util-image
+          - xcb-util-keysyms
+          - xcb-util-renderutil
+          - xcb-util-wm
+        state: present
+
+    - name: Install Cockpit & AD/domain-join tools
+      dnf:
+        name:
+          - cockpit
+          - cockpit-storaged
+          - cockpit-shell
+          - samba-common-tools
+          - adcli
+          - sssd
+          - realmd
+          - oddjob
+          - oddjob-mkhomedir
+          - krb5-workstation
+        state: present
+
+    - name: Enable and start Cockpit socket
+      ansible.builtin.service:
+        name: cockpit.socket
+        enabled: yes
+        state: started
+
+    - name: Disable and stop mcelog
+      ansible.builtin.service:
+        name: mcelog.service
+        enabled: no
+        state: stopped
+
+    - name: Enable and start rasdaemon
+      ansible.builtin.service:
+        name: rasdaemon.service
+        enabled: yes
+        state: started
