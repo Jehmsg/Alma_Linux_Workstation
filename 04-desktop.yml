@@ -13,6 +13,8 @@
         state: present
 
     - name: Set graphical target as default
-      ansible.builtin.command:
-        cmd: systemctl set-default graphical.target
-      changed_when: true
+      ansible.builtin.file:
+        src: /usr/lib/systemd/system/graphical.target
+        dest: /etc/systemd/system/default.target
+        state: link
+        force: true

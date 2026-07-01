@@ -1,25 +1,27 @@
 ---
-- name: Configure Network & Sysctl Tuning
+- name: Configure Tuning, Sysctl & System Limits
   hosts: localhost
   connection: local
   become: true
 
   tasks:
-    - name: Create ASLON NFS mount point
-      ansible.builtin.file:
-        path: /mnt/aslon
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
+    - name: Install tuned
+      dnf:
+        name: tuned
+        state: present
 
-    - name: Mount ASLON NFS share
-      ansible.posix.mount:
-        path: /mnt/aslon
-        src: synology.alongsidegroup.com:/volume1/ASLON
-        fstype: nfs
-        opts: sec=sys,vers=4,rsize=1048576,wsize=1048576,_netdev,nofail,auto
-        state: mounted
+    - name: Enable and start tuned service
+      ansible.builtin.service:
+        name: tuned
+        enabled: yes
+        state: started
+
+    - name: Set tuned profile to balanced
+      ansible.builtin.command:
+        cmd: tuned-adm profile balanced
+      register: _tuned_result
+      changed_when: "'Switched' in _tuned_result.stdout"
+      failed_when: _tuned_result.rc != 0
 
     - name: Set vm.max_map_count for VFX applications
       ansible.posix.sysctl:
@@ -55,3 +57,17 @@
         value: '/var/crash/core.%e.%p'
         state: present
         reload: yes
+
+    - name: Deploy VFX system limits
+      ansible.builtin.copy:
+        dest: /etc/security/limits.d/vfx.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          * soft nofile 65536
+          * hard nofile 65536
+          * soft nproc 65536
+          * hard nproc 65536
+          * soft stack unlimited
+          * hard stack unlimited

@@ -1,0 +1,22 @@
+---
+- name: Configure NFS Mounts
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Create ASLON NFS mount point
+      ansible.builtin.file:
+        path: /mnt/aslon
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Mount ASLON NFS share
+      ansible.posix.mount:
+        path: /mnt/aslon
+        src: synology.alongsidegroup.com:/volume1/ASLON
+        fstype: nfs
+        opts: sec=sys,vers=4,rsize=1048576,wsize=1048576,_netdev,nofail,auto
+        state: mounted
