@@ -8,6 +8,8 @@
     - name: Install general dependencies
       dnf:
         name:
+          - apr
+          - apr-util
           - bash
           - curl
           - dbus
