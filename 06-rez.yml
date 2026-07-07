@@ -48,7 +48,7 @@
         path: "{{ rez_cache_dir }}"
         state: directory
         mode: '2777'
-        group: "{{ rez_group }}"
+        #group: "{{ rez_group }}"
 
     - name: Install rez-pip plugin
       ansible.builtin.command:
