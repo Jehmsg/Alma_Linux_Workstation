@@ -5,7 +5,7 @@
   become: true
   vars:
     realm_name: "alongsidegroup.com"
-    realm_user: "{{ lookup('env', 'REALM_USER') | default('admin', true) }}"
+    realm_user: "{{ lookup('env', 'REALM_USER') | default('Administrator', true) }}"
     realm_workgroup: "ALONGSIDE"
     join_sssd: true
     enable_mkhomedir: true
