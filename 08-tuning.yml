@@ -1,0 +1,73 @@
+---
+- name: Configure Tuning, Sysctl & System Limits
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install tuned
+      dnf:
+        name: tuned
+        state: present
+
+    - name: Enable and start tuned service
+      ansible.builtin.service:
+        name: tuned
+        enabled: yes
+        state: started
+
+    - name: Set tuned profile to balanced
+      ansible.builtin.command:
+        cmd: tuned-adm profile balanced
+      register: _tuned_result
+      changed_when: "'Switched' in _tuned_result.stdout"
+      failed_when: _tuned_result.rc != 0
+
+    - name: Set vm.max_map_count for VFX applications
+      ansible.posix.sysctl:
+        name: vm.max_map_count
+        value: '1048576'
+        state: present
+        reload: yes
+
+    - name: Set net.core.rmem_max for NFS performance
+      ansible.posix.sysctl:
+        name: net.core.rmem_max
+        value: '134217728'
+        state: present
+        reload: yes
+
+    - name: Set net.core.wmem_max for NFS performance
+      ansible.posix.sysctl:
+        name: net.core.wmem_max
+        value: '134217728'
+        state: present
+        reload: yes
+
+    - name: Set net.core.netdev_max_backlog
+      ansible.posix.sysctl:
+        name: net.core.netdev_max_backlog
+        value: '300000'
+        state: present
+        reload: yes
+
+    - name: Set kernel core dump pattern
+      ansible.posix.sysctl:
+        name: kernel.core_pattern
+        value: '/var/crash/core.%e.%p'
+        state: present
+        reload: yes
+
+    - name: Deploy VFX system limits
+      ansible.builtin.copy:
+        dest: /etc/security/limits.d/vfx.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          * soft nofile 65536
+          * hard nofile 65536
+          * soft nproc 65536
+          * hard nproc 65536
+          * soft stack unlimited
+          * hard stack unlimited

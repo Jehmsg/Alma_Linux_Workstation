@@ -1,0 +1,18 @@
+---
+- name: Configure SELinux
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install SELinux Python bindings
+      dnf:
+        name:
+          - python3-libselinux
+          - python3-libsemanage
+        state: present
+
+    - name: Set SELinux to permissive
+      ansible.posix.selinux:
+        policy: targeted
+        state: permissive

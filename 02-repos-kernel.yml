@@ -1,0 +1,61 @@
+---
+- name: Configure Repositories & Kernel
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    crb_powertools: "{{ 'powertools' if ansible_distribution_major_version == '8' else 'crb' }}"
+
+  tasks:
+    - name: Enable CRB / PowerTools repository
+      community.general.dnf_config_manager:
+        name: "{{ crb_powertools }}"
+        state: enabled
+
+    - name: Enable EPEL repository
+      community.general.dnf_config_manager:
+        name: epel
+        state: enabled
+
+    - name: Add Elrepo GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+
+    - name: Add Elrepo GPG key v2
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://www.elrepo.org/RPM-GPG-KEY-v2-elrepo.org
+
+    - name: Add NVIDIA CUDA repository
+      ansible.builtin.yum_repository:
+        name: cuda-rhel{{ ansible_distribution_major_version }}-x86_64
+        description: cuda-rhel{{ ansible_distribution_major_version }}-x86_64
+        file: cuda-rhel{{ ansible_distribution_major_version }}
+        baseurl: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64'
+        gpgkey: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/D42D0685.pub'
+        enabled: true
+        gpgcheck: true
+
+    - name: Install ELRepo release package
+      dnf:
+        name: 'https://www.elrepo.org/elrepo-release-{{ ansible_distribution_major_version }}.el{{ ansible_distribution_major_version }}.elrepo.noarch.rpm'
+        state: present
+
+    - name: Install RPM Fusion free release
+      dnf:
+        name: "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+
+    - name: Install RPM Fusion nonfree release
+      dnf:
+        name: "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+        state: present
+
+    - name: Install mainline kernel (kernel-ml)
+      dnf:
+        enablerepo: elrepo-kernel
+        name:
+          - kernel-ml
+          - kernel-ml-devel
+        state: present

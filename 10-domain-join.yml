@@ -1,0 +1,46 @@
+---
+- name: Join AD Domain
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    realm_name: "alongsidegroup.com"
+    realm_user: "{{ lookup('env', 'REALM_USER') | default('Administrator', true) }}"
+    realm_workgroup: "ALONGSIDE"
+    join_sssd: true
+    enable_mkhomedir: true
+
+  tasks:
+    - name: Prompt for AD domain password
+      ansible.builtin.prompt:
+        prompt: "Enter AD domain password for {{ realm_user }}@{{ realm_name }}"
+        private: yes
+      no_log: yes
+
+    - name: Join AD domain
+      community.general.realm:
+        name: "{{ realm_name }}"
+        user: "{{ realm_user }}"
+        password: "{{ ansible_prompt_password }}"
+        state: present
+        assume_positive: yes
+        assume_resolve: yes
+        workgroup: "{{ realm_workgroup }}"
+      no_log: yes
+
+    - name: Ensure SSSD is enabled and started
+      ansible.builtin.service:
+        name: sssd
+        enabled: yes
+        state: started
+
+    - name: Ensure oddjobd is enabled and started
+      ansible.builtin.service:
+        name: oddjobd
+        enabled: yes
+        state: started
+
+    - name: Ensure oddjob-mkhomedir service is enabled
+      ansible.builtin.service:
+        name: oddjob-mkhomedir
+        enabled: yes

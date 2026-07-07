@@ -1,0 +1,13 @@
+---
+- name: Install NVIDIA Drivers
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install NVIDIA 580 open drivers
+      dnf:
+        name:
+          - '@nvidia-driver:580-open'
+          - nvidia-open
+        state: present

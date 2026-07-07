@@ -1,0 +1,13 @@
+---
+# Full bootstrap: ansible-pull -U <repo> site.yml
+- import_playbook: 01-dotfiles.yml
+- import_playbook: 02-repos-kernel.yml
+- import_playbook: 03-nvidia.yml
+- import_playbook: 04-desktop.yml
+- import_playbook: 05-packages.yml
+- import_playbook: 06-rez.yml
+- import_playbook: 07-security.yml
+- import_playbook: 08-tuning.yml
+- import_playbook: 10-domain-join.yml
+- import_playbook: 09-nfs.yml
+- import_playbook: 11-ntp.yml
