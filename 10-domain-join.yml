@@ -12,11 +12,19 @@
     realm_password: "{{ lookup('env', 'REALM_PASSWORD') }}"
 
   tasks:
-    - name: Check REALM_PASSWORD is set
-      ansible.builtin.assert:
-        that:
-          - realm_password is defined and realm_password | length > 0
-        fail_msg: "REALM_PASSWORD environment variable must be set before running this playbook."
+    - name: Prompt for AD domain password
+      ansible.builtin.pause:
+        prompt: "Enter AD password for {{ realm_user }}"
+        echo: no
+      no_log: true
+      when: realm_password is not defined or realm_password | length == 0
+      register: _pw_result
+      changed_when: false
+
+    - name: Set password from prompt
+      ansible.builtin.set_fact:
+        realm_password: "{{ _pw_result.input }}"
+      when: _pw_result is defined and _pw_result.input
       no_log: yes
 
     - name: Join AD domain
