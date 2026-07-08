@@ -30,7 +30,9 @@
           - liberation-fonts
           - google-noto-fonts-common
           - google-noto-sans-fonts
-          - dejavu-fonts-all
+          - dejavu-sans-fonts
+          - dejavu-sans-mono-fonts
+          - dejavu-serif-fonts
         state: present
 
     - name: Install ffmpeg from RPM Fusion
