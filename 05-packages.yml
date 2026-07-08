@@ -39,7 +39,7 @@
       dnf:
         name: ffmpeg
         state: present
-        allow_erasing: yes
+        allowerasing: yes
 
     - name: Install Houdini / DCC dependencies
       dnf:
