@@ -9,19 +9,21 @@
     realm_workgroup: "ALONGSIDE"
     join_sssd: true
     enable_mkhomedir: true
+    realm_password: "{{ lookup('env', 'REALM_PASSWORD') }}"
 
   tasks:
-    - name: Prompt for AD domain password
-      ansible.builtin.prompt:
-        prompt: "Enter AD domain password for {{ realm_user }}@{{ realm_name }}"
-        private: yes
+    - name: Check REALM_PASSWORD is set
+      ansible.builtin.assert:
+        that:
+          - realm_password is defined and realm_password | length > 0
+        fail_msg: "REALM_PASSWORD environment variable must be set before running this playbook."
       no_log: yes
 
     - name: Join AD domain
       community.general.realm:
         name: "{{ realm_name }}"
         user: "{{ realm_user }}"
-        password: "{{ ansible_prompt_password }}"
+        password: "{{ realm_password }}"
         state: present
         assume_positive: yes
         assume_resolve: yes
