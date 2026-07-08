@@ -9,24 +9,37 @@
     realm_workgroup: "ALONGSIDE"
     join_sssd: true
     enable_mkhomedir: true
+    realm_password: "{{ lookup('env', 'REALM_PASSWORD', default='__unset__') }}"
 
   tasks:
-    - name: Prompt for AD domain password
-      ansible.builtin.prompt:
-        prompt: "Enter AD domain password for {{ realm_user }}@{{ realm_name }}"
-        private: yes
-      no_log: yes
+    - name: Fail if REALM_PASSWORD not set
+      ansible.builtin.fail:
+        msg: >-
+          REALM_PASSWORD environment variable is not set. Either:
+            1. Set it before running ansible-pull:
+               export REALM_PASSWORD="your_password"
+               sudo ansible-pull -U <repo> 10-domain-join.yml
+            2. Run interactively (no ansible-pull):
+               ansible-playbook 10-domain-join.yml
+      when: realm_password == '__unset__'
+
+    - name: Check if already joined to AD domain
+      ansible.builtin.command:
+        cmd: realm list
+      register: realm_status
+      changed_when: false
+      failed_when: false
+      no_log: true
 
     - name: Join AD domain
-      community.general.realm:
-        name: "{{ realm_name }}"
-        user: "{{ realm_user }}"
-        password: "{{ ansible_prompt_password }}"
-        state: present
-        assume_positive: yes
-        assume_resolve: yes
-        workgroup: "{{ realm_workgroup }}"
-      no_log: yes
+      ansible.builtin.command:
+        cmd: "realm join --user={{ realm_user }} --verbose {{ realm_name }}"
+        stdin: "{{ realm_password }}"
+        stdin_add_newline: true
+      register: realm_join_result
+      changed_when: "'Already a member' not in realm_join_result.stderr"
+      no_log: true
+      when: realm_status is not defined or realm_status.rc != 0 or realm_name not in realm_status.stdout
 
     - name: Ensure SSSD is enabled and started
       ansible.builtin.service:
@@ -40,7 +53,15 @@
         enabled: yes
         state: started
 
-    - name: Ensure oddjob-mkhomedir service is enabled
-      ansible.builtin.service:
-        name: oddjob-mkhomedir
-        enabled: yes
+    - name: Enable oddjob-mkhomedir (D-Bus module via oddjobd reload)
+      ansible.builtin.file:
+        path: /etc/oddjobd.conf.d/oddjobd-mkhomedir.conf
+        owner: root
+        group: root
+        mode: "0644"
+        state: touch
+
+    - name: Reload oddjobd to apply mkhomedir config
+      ansible.builtin.systemd:
+        name: oddjobd
+        state: reloaded

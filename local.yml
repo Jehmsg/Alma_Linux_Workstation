@@ -305,41 +305,76 @@
       dnf:
         name: tuned
         state: present
- 
+
     - name: Enable and start tuned
       ansible.builtin.service:
         name: tuned
         enabled: yes
         state: started
- 
-    - name: Set tuned profile to balanced for workstations
+
+    - name: Set tuned profile to latency-performance for VFX workstations
       ansible.builtin.command:
-        cmd: tuned-adm profile balanced
+        cmd: tuned-adm profile latency-performance
       changed_when: false
 
     # SYSCTL TUNING
     #------------
+    - name: Set vm.swappiness for large scene caches
+      ansible.posix.sysctl:
+        name: vm.swappiness
+        value: '10'
+        state: present
+        reload: yes
+
+    - name: Set vm.dirty_ratio for large file writes (cache renders)
+      ansible.posix.sysctl:
+        name: vm.dirty_ratio
+        value: '60'
+        state: present
+        reload: yes
+
+    - name: Set vm.dirty_background_ratio
+      ansible.posix.sysctl:
+        name: vm.dirty_background_ratio
+        value: '5'
+        state: present
+        reload: yes
+
+    - name: Set vm.min_free_kbytes for headroom
+      ansible.posix.sysctl:
+        name: vm.min_free_kbytes
+        value: '262144'
+        state: present
+        reload: yes
+
     - name: Set vm.max_map_count for VFX applications
       ansible.posix.sysctl:
         name: vm.max_map_count
         value: '1048576'
         state: present
         reload: yes
- 
+
+    - name: Set fs.file-max
+      ansible.posix.sysctl:
+        name: fs.file-max
+        value: '1048576'
+        state: present
+        reload: yes
+
     - name: Set net.core.rmem_max for NFS performance
       ansible.posix.sysctl:
         name: net.core.rmem_max
         value: '134217728'
         state: present
         reload: yes
- 
+
     - name: Set net.core.wmem_max for NFS performance
       ansible.posix.sysctl:
         name: net.core.wmem_max
         value: '134217728'
         state: present
         reload: yes
- 
+
     - name: Set net.core.netdev_max_backlog
       ansible.posix.sysctl:
         name: net.core.netdev_max_backlog
@@ -369,3 +404,5 @@
           * hard nproc 65536
           * soft stack unlimited
           * hard stack unlimited
+          * soft memlock unlimited
+          * hard memlock unlimited

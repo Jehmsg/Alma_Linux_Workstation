@@ -1,5 +1,5 @@
 ---
-- name: Configure Tuning, Sysctl & System Limits
+- name: VFX Workstation Tuning
   hosts: localhost
   connection: local
   become: true
@@ -16,16 +16,51 @@
         enabled: yes
         state: started
 
-    - name: Set tuned profile to balanced
+    - name: Set tuned profile to latency-performance
       ansible.builtin.command:
-        cmd: tuned-adm profile balanced
+        cmd: tuned-adm profile latency-performance
       register: _tuned_result
       changed_when: "'Switched' in _tuned_result.stdout"
       failed_when: _tuned_result.rc != 0
 
+    - name: Set vm.swappiness for large scene caches
+      ansible.posix.sysctl:
+        name: vm.swappiness
+        value: '10'
+        state: present
+        reload: yes
+
+    - name: Set vm.dirty_ratio for large file writes (cache renders)
+      ansible.posix.sysctl:
+        name: vm.dirty_ratio
+        value: '60'
+        state: present
+        reload: yes
+
+    - name: Set vm.dirty_background_ratio
+      ansible.posix.sysctl:
+        name: vm.dirty_background_ratio
+        value: '5'
+        state: present
+        reload: yes
+
+    - name: Set vm.min_free_kbytes for headroom
+      ansible.posix.sysctl:
+        name: vm.min_free_kbytes
+        value: '262144'
+        state: present
+        reload: yes
+
     - name: Set vm.max_map_count for VFX applications
       ansible.posix.sysctl:
         name: vm.max_map_count
+        value: '1048576'
+        state: present
+        reload: yes
+
+    - name: Set fs.file-max
+      ansible.posix.sysctl:
+        name: fs.file-max
         value: '1048576'
         state: present
         reload: yes
@@ -71,3 +106,5 @@
           * hard nproc 65536
           * soft stack unlimited
           * hard stack unlimited
+          * soft memlock unlimited
+          * hard memlock unlimited
