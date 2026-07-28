@@ -11,3 +11,4 @@
           - '@nvidia-driver:580-open'
           - nvidia-open
         state: present
+

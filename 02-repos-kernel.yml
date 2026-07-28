@@ -54,10 +54,3 @@
         state: present
         disable_gpg_check: true
 
-    - name: Install mainline kernel (kernel-ml)
-      dnf:
-        enablerepo: elrepo-kernel
-        name:
-          - kernel-ml
-          - kernel-ml-devel
-        state: present

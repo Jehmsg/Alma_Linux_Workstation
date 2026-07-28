@@ -3,6 +3,7 @@
 - import_playbook: 01-dotfiles.yml
 - import_playbook: 02-repos-kernel.yml
 - import_playbook: 03-nvidia.yml
+- import_playbook: 03b-kernel-ml.yml
 - import_playbook: 04-desktop.yml
 - import_playbook: 05-packages.yml
 - import_playbook: 06-rez.yml
