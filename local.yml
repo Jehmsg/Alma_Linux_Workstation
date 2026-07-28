@@ -312,9 +312,9 @@
         enabled: yes
         state: started
  
-    - name: Set tuned profile to balanced for workstations
+    - name: Set tuned profile to latency-performance for VFX workstations
       ansible.builtin.command:
-        cmd: tuned-adm profile balanced
+        cmd: tuned-adm profile latency-performance
       changed_when: false
 
     # SYSCTL TUNING

@@ -16,9 +16,9 @@
         enabled: yes
         state: started
 
-    - name: Set tuned profile to balanced
+    - name: Set tuned profile to latency-performance
       ansible.builtin.command:
-        cmd: tuned-adm profile balanced
+        cmd: tuned-adm profile latency-performance
       register: _tuned_result
       changed_when: "'Switched' in _tuned_result.stdout"
       failed_when: _tuned_result.rc != 0
