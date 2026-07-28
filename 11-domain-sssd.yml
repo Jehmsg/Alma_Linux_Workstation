@@ -14,43 +14,39 @@
         state: started
 
     - name: Set fallback_homedir
-      ansible.builtin.lineinfile:
+      ansible.builtin.ini_file:
         path: /etc/sssd/sssd.conf
-        regexp: '^fallback_homedir'
-        line: 'fallback_homedir = /home/%u'
-        insertbefore: '^ldap_id_mapping'
-        section: '^\[domain/{{ realm_name }}\]$'
-
+        section: "domain/{{ realm_name }}"
+        option: fallback_homedir
+        value: /home/%u
+        no_extra_spaces: true
       notify: restart sssd
 
     - name: Set use_fully_qualified_names
-      ansible.builtin.lineinfile:
+      ansible.builtin.ini_file:
         path: /etc/sssd/sssd.conf
-        regexp: '^use_fully_qualified_names'
-        line: 'use_fully_qualified_names = False'
-        insertbefore: '^ldap_id_mapping'
-        section: '^\[domain/{{ realm_name }}\]$'
-
+        section: "domain/{{ realm_name }}"
+        option: use_fully_qualified_names
+        value: "False"
+        no_extra_spaces: true
       notify: restart sssd
 
     - name: Set ldap_idmap_range_min
-      ansible.builtin.lineinfile:
+      ansible.builtin.ini_file:
         path: /etc/sssd/sssd.conf
-        regexp: '^ldap_idmap_range_min'
-        line: 'ldap_idmap_range_min = 1260388352'
-        insertbefore: '^ldap_id_mapping'
-        section: '^\[domain/{{ realm_name }}\]$'
-
+        section: "domain/{{ realm_name }}"
+        option: ldap_idmap_range_min
+        value: "1260388352"
+        no_extra_spaces: true
       notify: restart sssd
 
     - name: Set ldap_idmap_default_domain_sid
-      ansible.builtin.lineinfile:
+      ansible.builtin.ini_file:
         path: /etc/sssd/sssd.conf
-        regexp: '^ldap_idmap_default_domain_sid'
-        line: 'ldap_idmap_default_domain_sid = S-1-5-21-2080557663-2646592229-2320375442'
-        insertbefore: '^ldap_id_mapping'
-        section: '^\[domain/{{ realm_name }}\]$'
-
+        section: "domain/{{ realm_name }}"
+        option: ldap_idmap_default_domain_sid
+        value: "S-1-5-21-2080557663-2646592229-2320375442"
+        no_extra_spaces: true
       notify: restart sssd
 
   handlers:
