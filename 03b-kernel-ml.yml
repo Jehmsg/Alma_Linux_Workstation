@@ -1,0 +1,14 @@
+---
+- name: Install Mainline Kernel
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install mainline kernel (kernel-ml)
+      dnf:
+        enablerepo: elrepo-kernel
+        name:
+          - kernel-ml
+          - kernel-ml-devel
+        state: present
