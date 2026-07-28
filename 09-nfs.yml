@@ -13,10 +13,16 @@
         group: root
         mode: '0755'
 
+    - name: Add ASLON NFS entry to fstab
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        regexp: '^synology\.alongsidegroup\.com:/volume1/ASLON'
+        line: 'synology.alongsidegroup.com:/volume1/ASLON /mnt/aslon nfs defaults,nofail,nfsvers=3,sec=sys,x-systemd.after=nss-lookup.target,x-systemd.automount'
+        create: true
+
     - name: Mount ASLON NFS share
-      ansible.posix.mount:
-        path: /mnt/aslon
-        src: synology.alongsidegroup.com:/volume1/ASLON
-        fstype: nfs
-        opts: sec=sys,vers=4,rsize=1048576,wsize=1048576,_netdev,nofail,auto
-        state: mounted
+      ansible.builtin.command:
+        cmd: mount /mnt/aslon
+      register: _mount_result
+      changed_when: _mount_result.rc == 0
+      failed_when: _mount_result.rc != 0
