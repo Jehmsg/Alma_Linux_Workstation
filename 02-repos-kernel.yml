@@ -52,10 +52,3 @@
         name: "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
         state: present
 
-    - name: Install mainline kernel (kernel-ml)
-      dnf:
-        enablerepo: elrepo-kernel
-        name:
-          - kernel-ml
-          - kernel-ml-devel
-        state: present

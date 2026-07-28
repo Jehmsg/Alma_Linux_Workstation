@@ -12,6 +12,7 @@
           - '@base-x'
         state: present
 
+
     - name: Set graphical target as default
       ansible.builtin.file:
         src: /usr/lib/systemd/system/graphical.target
