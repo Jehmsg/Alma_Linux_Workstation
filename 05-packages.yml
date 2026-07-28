@@ -45,7 +45,6 @@
       dnf:
         name:
           - alsa-lib
-          - libatomic
           - cups-libs
           - dbus-libs
           - expat
