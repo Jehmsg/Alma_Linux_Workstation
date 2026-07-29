@@ -1,0 +1,6 @@
+---
+# Post-domain-join playbook: SSSD config + NFS mounts
+# Run after 10-domain-join.yml:
+#   ansible-pull -U <repo> 12-post-domain.yml
+- import_playbook: 11-domain-sssd.yml
+- import_playbook: 09-nfs.yml
