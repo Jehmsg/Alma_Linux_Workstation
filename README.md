@@ -33,10 +33,9 @@ This collection automates the setup of a KDE workstation tailored for VFX pipeli
 - **Packages** — general deps, Houdini/DCC dependencies, Cockpit, AD tools, services
 - **Rez** — Rez package manager install & config
 - **Security** — SELinux permissive mode
-- **Tuning** — tuned profile, sysctl tuning, system limits
-- **NFS** — ASLON NFS share mount
+- **Tuning** — tuned profile, sysctl tuning *(disabled — under repair)*
 - **Domain join** — AD/SSSD realm join (manual)
-- **SSSD LDAP** — manual SSSD LDAP configuration (run after domain join)
+- **Post-domain** — SSSD LDAP + NFS mounts (run after domain join)
 
 ---
 
@@ -64,7 +63,7 @@ Run the following on the target machine as root (or with `sudo`):
 ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git site.yml
 ```
 
-This will clone the repository and run all playbooks in order:
+This will clone the repository and run all playbooks in order (except domain-join/post-domain which are manual):
 
 | # | Playbook | Purpose |
 |---|----------|---------|
@@ -76,16 +75,14 @@ This will clone the repository and run all playbooks in order:
 | 5 | `05-packages.yml` | General packages, Houdini deps, Cockpit, services |
 | 6 | `06-rez.yml` | Rez package manager install & config |
 | 7 | `07-security.yml` | SELinux permissive mode |
-| 8 | `08-tuning.yml` | Tuned performance profile, sysctl tuning |
-| 9 | `09-nfs.yml` | NFS mounts |
-| 10 | `10-domain-join.yml` | AD/SSSD realm join (manual) |
+| 8 | `08-tuning.yml` | Tuned profile, sysctl tuning *(disabled — under repair)* |
 
+> `08-tuning.yml` is commented out of `site.yml` — under repair.
 > `10-domain-join.yml` is commented out of `site.yml` and must be run manually.
-> `11-domain-sssd.yml` is not included in `site.yml` and must be run manually after domain join.
 
 ### Run a Single Playbook
 
-Re-run any individual stage without re-executing the full bootstrap:
+Re-apply any individual stage without re-executing the full bootstrap:
 
 ```bash
 # Re-apply only packages and services
@@ -98,7 +95,20 @@ ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git 06-rez.yml
 ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git 03-nvidia.yml
 ```
 
-### Domain Join
+### Domain Join + Post-Domain (Combined)
+
+```bash
+# 1. Join the domain
+export REALM_PASSWORD="your_password"
+ansible-playbook 10-domain-join.yml
+
+# 2. Run post-domain tasks (SSSD + NFS)
+ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git post-domain.yml
+```
+
+> `post-domain.yml` combines `11-domain-sssd.yml` and `09-nfs.yml` — both require the machine to be domain-joined first.
+
+### Domain Join (Individual)
 
 Join the machine to the Active Directory domain manually:
 
@@ -108,7 +118,7 @@ sudo ansible-playbook 10-domain-join.yml
 
 You will be prompted for the `Administrator` password (or set `REALM_PASSWORD` env var).
 
-### SSSD LDAP Configuration
+### SSSD LDAP Configuration (Individual)
 
 After joining the domain, configure SSSD LDAP settings:
 
@@ -116,7 +126,7 @@ After joining the domain, configure SSSD LDAP settings:
 sudo ansible-playbook 11-domain-sssd.yml
 ```
 
-This adds `fallback_homedir`, `use_fully_qualified_names`, `ldap_idmap_range_min`, and `ldap_idmap_default_domain_sid` to the SSSD domain configuration.
+This adds `fallback_homedir`, `use_fully_qualified_names`, `ldap_idmap_range_min`, and `ldap_idmap_default_domain_sid` to the SSSD domain configuration. After updating SSSD settings, the playbook stops the service, flushes all cache files (`/var/lib/sss/db/*` and `/var/lib/sss/mc/*`), then restarts SSSD.
 
 ### Verbose Output
 
@@ -180,6 +190,8 @@ Cockpit is enabled and started automatically at boot. `mcelog` is disabled. `ras
 
 ### Tuning (`08-tuning.yml`)
 
+> **Disabled** — under repair.
+
 - `tuned` installed and running with `latency-performance` profile
 - `vm.max_map_count` set to 1048576 for VFX applications
 - NFS buffer sizes (`rmem_max`, `wmem_max`) increased for performance
@@ -207,13 +219,15 @@ Manually run after domain join to configure SSSD for proper AD user mapping:
 - `ldap_idmap_range_min = 1260388352`
 - `ldap_idmap_default_domain_sid = S-1-5-21-2080557663-2646592229-2320375442`
 
+After applying changes, SSSD is stopped, all cache files are flushed, and the service is restarted.
+
 ---
 
 ## Repository Structure
 
 ```
 .
-├── site.yml                  # Orchestrator — runs playbooks in order (domain join excluded)
+├── site.yml                  # Orchestrator — runs playbooks in order (domain join & tuning excluded)
 ├── 01-dotfiles.yml           # Shell profiles, environment variables, umask
 ├── 02-repos-kernel.yml       # Repositories (CRB, EPEL, ELRepo, NVIDIA, RPM Fusion)
 ├── 03-nvidia.yml             # NVIDIA 580 open drivers
@@ -222,10 +236,11 @@ Manually run after domain join to configure SSSD for proper AD user mapping:
 ├── 05-packages.yml           # General packages, Houdini deps, Cockpit, services
 ├── 06-rez.yml                # Rez package manager install & config
 ├── 07-security.yml           # SELinux permissive mode
-├── 08-tuning.yml             # Tuned profile, sysctl tuning, system limits
+├── 08-tuning.yml             # Tuned profile, sysctl tuning *(disabled — under repair)*
 ├── 09-nfs.yml                # NFS mounts
 ├── 10-domain-join.yml        # AD/SSSD realm join (manual)
 ├── 11-domain-sssd.yml        # SSSD LDAP config (manual, run after domain join)
+├── post-domain.yml           # Post-domain tasks (SSSD + NFS, requires domain join)
 ├── Files/                    # Config files deployed to the system
 │   ├── profile               # /etc/profile
 │   ├── bash_profile          # /etc/skel/.bash_profile
@@ -278,4 +293,4 @@ Edit `11-domain-sssd.yml` to change the SID, range min, or other LDAP mapping se
 - The ELRepo package URL adapts to `{{ ansible_distribution_major_version }}` automatically.
 - The NVIDIA CUDA repo URL adapts to `{{ ansible_distribution_major_version }}` automatically.
 - NFS uses `vers=3` to avoid mount hangs seen with `vers=4` on the current Synology target.
-- `10-domain-join.yml` and `11-domain-sssd.yml` are not included in `site.yml` — they must be run manually.
+- `10-domain-join.yml`, `08-tuning.yml`, and `post-domain.yml` are not included in `site.yml` — they must be run manually.
