@@ -19,7 +19,6 @@
         section: "domain/{{ realm_name }}"
         option: fallback_homedir
         value: /home/%u
-      notify: restart sssd
 
     - name: Set use_fully_qualified_names
       ansible.builtin.ini_file:
@@ -27,7 +26,6 @@
         section: "domain/{{ realm_name }}"
         option: use_fully_qualified_names
         value: "False"
-      notify: restart sssd
 
     - name: Set ldap_idmap_range_min
       ansible.builtin.ini_file:
@@ -35,7 +33,6 @@
         section: "domain/{{ realm_name }}"
         option: ldap_idmap_range_min
         value: "1260388352"
-      notify: restart sssd
 
     - name: Set ldap_idmap_default_domain_sid
       ansible.builtin.ini_file:
@@ -43,10 +40,23 @@
         section: "domain/{{ realm_name }}"
         option: ldap_idmap_default_domain_sid
         value: "S-1-5-21-2080557663-2646592229-2320375442"
-      notify: restart sssd
 
-  handlers:
-    - name: restart sssd
+    - name: Stop SSSD
       ansible.builtin.service:
         name: sssd
-        state: restarted
+        state: stopped
+
+    - name: Flush SSSD cache (idmap + memory cache)
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+        recurse: true
+      loop:
+        - /var/lib/sss/db
+        - /var/lib/sss/mc
+
+    - name: Start SSSD
+      ansible.builtin.service:
+        name: sssd
+        enabled: yes
+        state: started
