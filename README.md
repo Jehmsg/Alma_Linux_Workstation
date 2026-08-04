@@ -55,12 +55,12 @@ dnf install -y ansible git
 
 ## Usage
 
-### Full Bootstrap (All Playbooks)
+### Workstation Bootstrap (All Playbooks)
 
 Run the following on the target machine as root (or with `sudo`):
 
 ```bash
-ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git site.yml
+ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git workstation.yml
 ```
 
 This will clone the repository and run all playbooks in order (except domain-join/post-domain which are manual):
@@ -77,8 +77,18 @@ This will clone the repository and run all playbooks in order (except domain-joi
 | 7 | `07-security.yml` | SELinux permissive mode |
 | 8 | `08-tuning.yml` | Tuned profile, sysctl tuning *(disabled — under repair)* |
 
-> `08-tuning.yml` is commented out of `site.yml` — under repair.
-> `10-domain-join.yml` is commented out of `site.yml` and must be run manually.
+> `08-tuning.yml` is commented out of `workstation.yml` — under repair.
+> `10-domain-join.yml` is commented out of `workstation.yml` and must be run manually.
+
+### Render Blade Bootstrap
+
+Render blades use the same modules as workstations but without KDE desktop:
+
+```bash
+ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git render-blade.yml
+```
+
+Domain join and post-domain tasks are the same — run `10-domain-join.yml` then `post-domain.yml` manually.
 
 ### Run a Single Playbook
 
@@ -227,27 +237,28 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 
 ```
 .
-├── site.yml                  # Orchestrator — runs playbooks in order (domain join & tuning excluded)
-├── 01-dotfiles.yml           # Shell profiles, environment variables, umask
-├── 02-repos-kernel.yml       # Repositories (CRB, EPEL, ELRepo, NVIDIA, RPM Fusion)
-├── 03-nvidia.yml             # NVIDIA 580 open drivers
-├── 03b-kernel-ml.yml         # Mainline kernel (kernel-ml) from ELRepo
-├── 04-desktop.yml            # KDE Plasma Workspaces + graphical target
-├── 05-packages.yml           # General packages, Houdini deps, Cockpit, services
-├── 06-rez.yml                # Rez package manager install & config
-├── 07-security.yml           # SELinux permissive mode
-├── 08-tuning.yml             # Tuned profile, sysctl tuning *(disabled — under repair)*
-├── 09-nfs.yml                # NFS mounts
-├── 10-domain-join.yml        # AD/SSSD realm join (manual)
-├── 11-domain-sssd.yml        # SSSD LDAP config (manual, run after domain join)
-├── post-domain.yml           # Post-domain tasks (SSSD + NFS, requires domain join)
-├── Files/                    # Config files deployed to the system
-│   ├── profile               # /etc/profile
-│   ├── bash_profile          # /etc/skel/.bash_profile
-│   ├── umask.sh              # /etc/profile.d/umask.sh
-│   ├── rez.sh                # /etc/profile.d/rez.sh
-│   └── resolv.conf           # DNS resolver config
-├── local.yml                 # Legacy monolithic playbook (deprecated)
+├── workstation.yml             # Workstation bootstrap (includes KDE desktop)
+├── render-blade.yml            # Render blade bootstrap (no KDE desktop)
+├── 01-dotfiles.yml             # Shell profiles, environment variables, umask
+├── 02-repos-kernel.yml         # Repositories (CRB, EPEL, ELRepo, NVIDIA, RPM Fusion)
+├── 03-nvidia.yml               # NVIDIA 580 open drivers
+├── 03b-kernel-ml.yml           # Mainline kernel (kernel-ml) from ELRepo
+├── 04-desktop.yml              # KDE Plasma Workspaces + graphical target
+├── 05-packages.yml             # General packages, Houdini deps, Cockpit, services
+├── 06-rez.yml                  # Rez package manager install & config
+├── 07-security.yml             # SELinux permissive mode
+├── 08-tuning.yml               # Tuned profile, sysctl tuning *(disabled — under repair)*
+├── 09-nfs.yml                  # NFS mounts
+├── 10-domain-join.yml          # AD/SSSD realm join (manual)
+├── 11-domain-sssd.yml          # SSSD LDAP config (manual, run after domain join)
+├── post-domain.yml             # Post-domain tasks (SSSD + NFS, requires domain join)
+├── Files/                      # Config files deployed to the system
+│   ├── profile                 # /etc/profile
+│   ├── bash_profile            # /etc/skel/.bash_profile
+│   ├── umask.sh                # /etc/profile.d/umask.sh
+│   ├── rez.sh                  # /etc/profile.d/rez.sh
+│   └── resolv.conf             # DNS resolver config
+├── local.yml                   # Legacy monolithic playbook (deprecated)
 └── README.md
 ```
 
@@ -293,4 +304,4 @@ Edit `11-domain-sssd.yml` to change the SID, range min, or other LDAP mapping se
 - The ELRepo package URL adapts to `{{ ansible_distribution_major_version }}` automatically.
 - The NVIDIA CUDA repo URL adapts to `{{ ansible_distribution_major_version }}` automatically.
 - NFS uses `vers=3` to avoid mount hangs seen with `vers=4` on the current Synology target.
-- `10-domain-join.yml`, `08-tuning.yml`, and `post-domain.yml` are not included in `site.yml` — they must be run manually.
+- `10-domain-join.yml`, `08-tuning.yml`, and `post-domain.yml` are not included in `workstation.yml` or `render-blade.yml` — they must be run manually.
