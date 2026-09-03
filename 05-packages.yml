@@ -112,11 +112,11 @@
         enabled: yes
         state: started
 
-    - name: Disable and stop mcelog
-      ansible.builtin.service:
-        name: mcelog.service
-        enabled: no
-        state: stopped
+    #- name: Disable and stop mcelog
+     # ansible.builtin.service:
+      #  name: mcelog.service
+       # enabled: no
+        #state: stopped
 
     - name: Enable and start rasdaemon
       ansible.builtin.service:
