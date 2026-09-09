@@ -46,13 +46,23 @@
         name: sssd
         state: stopped
 
-    - name: Flush SSSD cache (idmap + memory cache)
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
+    - name: Find SSSD cache files (idmap + memory cache)
+      ansible.builtin.find:
+        paths: "{{ item }}"
+        recurse: true
+        file_type: file
       loop:
         - /var/lib/sss/db
         - /var/lib/sss/mc
+      register: sssd_cache_files
+
+    - name: Flush SSSD cache (idmap + memory cache)
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ sssd_cache_files.results | map(attribute='files') | flatten | list }}"
+      loop_control:
+        label: "{{ item.path }}"
 
     - name: Start SSSD
       ansible.builtin.service:
