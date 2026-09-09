@@ -50,7 +50,6 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
-        recurse: true
       loop:
         - /var/lib/sss/db
         - /var/lib/sss/mc
