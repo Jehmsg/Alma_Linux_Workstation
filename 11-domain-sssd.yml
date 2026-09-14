@@ -46,17 +46,44 @@
         name: sssd
         state: stopped
 
-    - name: Flush SSSD cache (idmap + memory cache)
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
+    - name: Find SSSD cache files (idmap + memory cache)
+      ansible.builtin.find:
+        paths: "{{ item }}"
         recurse: true
+        file_type: file
       loop:
         - /var/lib/sss/db
         - /var/lib/sss/mc
+      register: sssd_cache_files
+
+    - name: Flush SSSD cache (idmap + memory cache)
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ sssd_cache_files.results | map(attribute='files') | flatten | list }}"
+      loop_control:
+        label: "{{ item.path }}"
 
     - name: Start SSSD
       ansible.builtin.service:
         name: sssd
         enabled: yes
         state: started
+
+    - name: Add domain admins comment to sudoers
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: "## domain admins"
+        state: present
+
+    - name: Allow domain Linux Admins to run sudo
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: '%Linux\ Admin@{{ realm_name }} ALL=(ALL)      ALL'
+        state: present
+
+    - name: Validate sudoers syntax
+      ansible.builtin.command:
+        cmd: visudo -c -f /etc/sudoers
+      register: visudo_check
+      changed_when: false

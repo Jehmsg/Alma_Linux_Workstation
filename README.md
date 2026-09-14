@@ -35,7 +35,7 @@ This collection automates the setup of a KDE workstation tailored for VFX pipeli
 - **Security** — SELinux permissive mode
 - **Tuning** — tuned profile, sysctl tuning *(disabled — under repair)*
 - **Domain join** — AD/SSSD realm join (manual)
-- **Post-domain** — SSSD LDAP + NFS mounts (run after domain join)
+- **Post-domain** — SSSD LDAP, NFS mounts, `deadline.user` home directory (run after domain join)
 
 ---
 
@@ -112,11 +112,11 @@ ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git 03-nvidia.y
 export REALM_PASSWORD="your_password"
 ansible-playbook 10-domain-join.yml
 
-# 2. Run post-domain tasks (SSSD + NFS)
+# 2. Run post-domain tasks (SSSD + NFS + Deadline home)
 ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git post-domain.yml
 ```
 
-> `post-domain.yml` combines `11-domain-sssd.yml` and `09-nfs.yml` — both require the machine to be domain-joined first.
+> `post-domain.yml` combines `11-domain-sssd.yml`, `09-nfs.yml`, and `12-deadline-home.yml` — all require the machine to be domain-joined first.
 
 ### Domain Join (Individual)
 
@@ -136,7 +136,7 @@ After joining the domain, configure SSSD LDAP settings:
 sudo ansible-playbook 11-domain-sssd.yml
 ```
 
-This adds `fallback_homedir`, `use_fully_qualified_names`, `ldap_idmap_range_min`, and `ldap_idmap_default_domain_sid` to the SSSD domain configuration. After updating SSSD settings, the playbook stops the service, flushes all cache files (`/var/lib/sss/db/*` and `/var/lib/sss/mc/*`), then restarts SSSD.
+This adds `fallback_homedir`, `use_fully_qualified_names`, `ldap_idmap_range_min`, and `ldap_idmap_default_domain_sid` to the SSSD domain configuration. After updating SSSD settings, the playbook stops the service, flushes all cache files (`/var/lib/sss/db/*` and `/var/lib/sss/mc/*`), then restarts SSSD. It also adds a sudoers rule granting the `Linux Admin` domain group full sudo access, and validates the resulting `/etc/sudoers` syntax.
 
 ### Verbose Output
 
@@ -228,8 +228,13 @@ Manually run after domain join to configure SSSD for proper AD user mapping:
 - `use_fully_qualified_names = False`
 - `ldap_idmap_range_min = 1260388352`
 - `ldap_idmap_default_domain_sid = S-1-5-21-2080557663-2646592229-2320375442`
+- A sudoers entry in `/etc/sudoers` granting the `Linux Admin` domain group (`Linux Admin@alongsidegroup.com`) full sudo access
 
 After applying changes, SSSD is stopped, all cache files are flushed, and the service is restarted.
+
+### Deadline Home (`12-deadline-home.yml`)
+
+- Creates `/home/deadline.user` with mode `0700`, owned by the AD user `deadline.user` and group `1260388865` (the AD group mapped into SSSD's idmap range). Runs in `post-domain.yml` after SSSD is configured so the user and group resolve.
 
 ---
 
@@ -251,7 +256,8 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 ├── 09-nfs.yml                  # NFS mounts
 ├── 10-domain-join.yml          # AD/SSSD realm join (manual)
 ├── 11-domain-sssd.yml          # SSSD LDAP config (manual, run after domain join)
-├── post-domain.yml             # Post-domain tasks (SSSD + NFS, requires domain join)
+├── 12-deadline-home.yml        # deadline.user home directory (run after domain join)
+├── post-domain.yml             # Post-domain tasks (SSSD + NFS + deadline home, requires domain join)
 ├── Files/                      # Config files deployed to the system
 │   ├── profile                 # /etc/profile
 │   ├── bash_profile            # /etc/skel/.bash_profile

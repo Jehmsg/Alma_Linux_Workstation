@@ -1,0 +1,19 @@
+---
+- name: Create Deadline User Home Directory
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    deadline_user: "deadline.user"
+    deadline_gid: 1260388865
+
+  tasks:
+    # Run after domain join + SSSD config so the AD user and mapped group resolve.
+    # Single idempotent task: creates the directory, then applies owner, group, and mode.
+    - name: Create /home/{{ deadline_user }} (owner {{ deadline_user }}, group {{ deadline_gid }}, mode 0700)
+      ansible.builtin.file:
+        path: "/home/{{ deadline_user }}"
+        state: directory
+        owner: "{{ deadline_user }}"
+        group: "{{ deadline_gid }}"
+        mode: "0700"

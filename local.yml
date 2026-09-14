@@ -112,6 +112,16 @@
     - name: graphical target
       shell: sudo systemctl set-default graphical.target
 
+    - name: Configure SDDM
+      ansible.builtin.lineinfile:
+        path: /etc/sddm.conf
+        regexp: '^#?{{ item.key }}='
+        line: '{{ item.key }}={{ item.value }}'
+      loop:
+        - { key: MinimumUid, value: '99999' }
+        - { key: MaximumUid, value: '99999' }
+        - { key: RememberLastUser, value: 'false' }
+
     #PROGRAM DEPENDENCIES
     #------------
     - name: general dependencies
