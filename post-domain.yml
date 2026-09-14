@@ -1,6 +1,7 @@
 ---
-# Post-domain-join playbook: SSSD config + NFS mounts
+# Post-domain-join playbook: SSSD config + NFS mounts + deadline user home
 # Run after 10-domain-join.yml:
-#   ansible-pull -U <repo> 12-post-domain.yml
+#   ansible-pull -U <repo> post-domain.yml
 - import_playbook: 11-domain-sssd.yml
 - import_playbook: 09-nfs.yml
+- import_playbook: 12-deadline-home.yml
