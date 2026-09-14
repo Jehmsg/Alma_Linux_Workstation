@@ -136,7 +136,7 @@ After joining the domain, configure SSSD LDAP settings:
 sudo ansible-playbook 11-domain-sssd.yml
 ```
 
-This adds `fallback_homedir`, `use_fully_qualified_names`, `ldap_idmap_range_min`, and `ldap_idmap_default_domain_sid` to the SSSD domain configuration. After updating SSSD settings, the playbook stops the service, flushes all cache files (`/var/lib/sss/db/*` and `/var/lib/sss/mc/*`), then restarts SSSD.
+This adds `fallback_homedir`, `use_fully_qualified_names`, `ldap_idmap_range_min`, and `ldap_idmap_default_domain_sid` to the SSSD domain configuration. After updating SSSD settings, the playbook stops the service, flushes all cache files (`/var/lib/sss/db/*` and `/var/lib/sss/mc/*`), then restarts SSSD. It also adds a sudoers rule granting the `Linux Admin` domain group full sudo access, and validates the resulting `/etc/sudoers` syntax.
 
 ### Verbose Output
 
@@ -228,6 +228,7 @@ Manually run after domain join to configure SSSD for proper AD user mapping:
 - `use_fully_qualified_names = False`
 - `ldap_idmap_range_min = 1260388352`
 - `ldap_idmap_default_domain_sid = S-1-5-21-2080557663-2646592229-2320375442`
+- A sudoers entry in `/etc/sudoers` granting the `Linux Admin` domain group (`Linux Admin@alongsidegroup.com`) full sudo access
 
 After applying changes, SSSD is stopped, all cache files are flushed, and the service is restarted.
 

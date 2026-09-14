@@ -69,3 +69,21 @@
         name: sssd
         enabled: yes
         state: started
+
+    - name: Add domain admins comment to sudoers
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: "## domain admins"
+        state: present
+
+    - name: Allow domain Linux Admins to run sudo
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: '%Linux\ Admin@{{ realm_name }} ALL=(ALL)      ALL'
+        state: present
+
+    - name: Validate sudoers syntax
+      ansible.builtin.command:
+        cmd: visudo -c -f /etc/sudoers
+      register: visudo_check
+      changed_when: false
