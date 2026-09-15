@@ -1,0 +1,39 @@
+---
+# Deadline remote client (render slave) install.
+# Run after domain join + NFS (post-domain.yml): the installer tarball is
+# extracted straight from the ASLON share into /tmp, and the unattended
+# installer runs as root (play-level `become: true`).
+- name: Install Deadline Remote Client
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    deadline_version: "10.4.2.3"
+    deadline_tarball: "/mnt/aslon/06_Pipeline/Installers/deadline/Deadline-{{ deadline_version }}-linux-installers.tar"
+    deadline_installer: "/tmp/DeadlineClient-{{ deadline_version }}-linux-x64-installer.run"
+    deadline_slave_dir: /opt/Thinkbox/Deadline10/Slave
+
+  tasks:
+    # Idempotency guard: the unattended installer is not safe to re-run, so
+    # skip everything if the slave is already installed.
+    - name: Check for existing Deadline slave installation
+      ansible.builtin.stat:
+        path: "{{ deadline_slave_dir }}"
+      register: deadline_existing
+
+    - name: Extract Deadline installer archive from ASLON to /tmp
+      ansible.builtin.unarchive:
+        src: "{{ deadline_tarball }}"
+        dest: /tmp
+        remote_src: yes
+        creates: "{{ deadline_installer }}"
+      when: not deadline_existing.stat.exists
+
+    - name: Install Deadline remote client (unattended)
+      ansible.builtin.command:
+        chdir: /tmp
+        cmd: "{{ deadline_installer }} --mode unattended --connectiontype Remote --proxyrootdir aslon-deadline.alongsidegroup.com:4433 --proxycertificate /mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx --launcherdaemon true --daemonuser deadline.user --slavestartup true --noguimode true"
+      register: deadline_install
+      changed_when: deadline_install.rc == 0
+      timeout: 1800
+      when: not deadline_existing.stat.exists
