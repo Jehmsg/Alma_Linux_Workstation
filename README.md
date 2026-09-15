@@ -35,7 +35,7 @@ This collection automates the setup of a KDE workstation tailored for VFX pipeli
 - **Security** — SELinux permissive mode
 - **Tuning** — tuned profile, sysctl tuning *(disabled — under repair)*
 - **Domain join** — AD/SSSD realm join (manual)
-- **Post-domain** — SSSD LDAP, NFS mounts, `deadline.user` home directory (run after domain join)
+- **Post-domain** — SSSD LDAP, NFS mounts, `deadline.user` home directory, Deadline remote client install, polkit admin rules (run after domain join)
 
 ---
 
@@ -116,7 +116,7 @@ ansible-playbook 10-domain-join.yml
 ansible-pull -U https://github.com/Jehmsg/Alma_Linux_Workstation.git post-domain.yml
 ```
 
-> `post-domain.yml` combines `11-domain-sssd.yml`, `09-nfs.yml`, and `12-deadline-home.yml` — all require the machine to be domain-joined first.
+> `post-domain.yml` combines `11-domain-sssd.yml`, `09-nfs.yml`, `12-deadline-home.yml`, `14-deadline.yml`, and `13-polkit-admin.yml` — all require the machine to be domain-joined first.
 
 ### Domain Join (Individual)
 
@@ -236,6 +236,14 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 
 - Creates `/home/deadline.user` with mode `0700`, owned by the AD user `deadline.user` and group `1260388865` (the AD group mapped into SSSD's idmap range). Runs in `post-domain.yml` after SSSD is configured so the user and group resolve.
 
+### Deadline Client (`14-deadline.yml`)
+
+- Extracts the `Deadline-10.4.2.3-linux-installers.tar` installer archive from `/mnt/aslon/06_Pipeline/Installers/deadline` directly into `/tmp` and runs the unattended remote client installer as root: connects to `aslon-deadline.alongsidegroup.com:4433` (certificate `/mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx`), launcher daemon runs as `deadline.user`, slave starts at boot. Skipped if `/opt/Thinkbox/Deadline10/Slave` already exists. Runs in `post-domain.yml` after the NFS mount.
+
+### Polkit Admin Rules (`13-polkit-admin.yml`)
+
+- Deploys `/etc/polkit-1/rules.d/49-alongside-admin.rules`, granting members of the `linux admin` AD group and the local `wheel` group admin rights in polkit authorization dialogs. Runs in `post-domain.yml` after SSSD is configured so the domain group resolves.
+
 ---
 
 ## Repository Structure
@@ -257,7 +265,9 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 ├── 10-domain-join.yml          # AD/SSSD realm join (manual)
 ├── 11-domain-sssd.yml          # SSSD LDAP config (manual, run after domain join)
 ├── 12-deadline-home.yml        # deadline.user home directory (run after domain join)
-├── post-domain.yml             # Post-domain tasks (SSSD + NFS + deadline home, requires domain join)
+├── 13-polkit-admin.yml         # polkit admin rules for domain admin groups (run after domain join)
+├── 14-deadline.yml             # Deadline remote client install (run after domain join + NFS)
+├── post-domain.yml             # Post-domain tasks (SSSD + NFS + deadline home + Deadline client + polkit, requires domain join)
 ├── Files/                      # Config files deployed to the system
 │   ├── profile                 # /etc/profile
 │   ├── bash_profile            # /etc/skel/.bash_profile
@@ -292,6 +302,10 @@ rez_group: artists
 ### NFS Mount
 
 Edit `09-nfs.yml` to change the NFS server, share path, or mount options.
+
+### Deadline
+
+The unattended install command in `14-deadline.yml` is intentionally hardcoded and must be matched exactly; only the installer path is templated from `deadline_version`. To upgrade, update `deadline_version` (plus any flags the new release requires).
 
 ### Domain
 

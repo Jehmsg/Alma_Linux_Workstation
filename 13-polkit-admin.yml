@@ -1,0 +1,20 @@
+---
+- name: Configure Polkit Admin Rules
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    # Grants members of the "linux admin" AD group (resolved via SSSD) and the
+    # local "wheel" group admin rights in polkit authorization dialogs.
+    # The 49- prefix orders it after the distro default rules.
+    - name: Deploy polkit admin rule for domain admin groups
+      ansible.builtin.copy:
+        dest: /etc/polkit-1/rules.d/49-alongside-admin.rules
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          polkit.addAdminRule(function(action, subject) {
+              return ["unix-group:linux admin", "unix-group:wheel"];
+          });
