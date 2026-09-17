@@ -175,7 +175,7 @@ Append `-vvv` to any command for detailed output.
 
 ### General Packages (`05-packages.yml`)
 
-`bash`, `curl`, `dbus`, `perl`, `git`, `less`, `zsh`, `python3.11`, `htop`, `btop`, `firefox`, `ark`, `flatpak`, `gdb`, `cifs-utils`, `nfs-utils`, `rasdaemon`, `liberation-fonts`, `google-noto-fonts-common`, `google-noto-sans-fonts`, `dejavu-sans-fonts`, `dejavu-sans-mono-fonts`, `dejavu-serif-fonts`
+`bash`, `curl`, `dbus`, `perl`, `git`, `less`, `zsh`, `python3.11`, `htop`, `btop`, `firefox`, `ark`, `flatpak`, `gdb`, `cifs-utils`, `compat-openssl11`, `nfs-utils`, `rasdaemon`, `liberation-fonts`, `google-noto-fonts-common`, `google-noto-sans-fonts`, `dejavu-sans-fonts`, `dejavu-sans-mono-fonts`, `dejavu-serif-fonts`
 
 ### Houdini / DCC Dependencies (`05-packages.yml`)
 
@@ -238,7 +238,7 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 
 ### Deadline Client (`14-deadline.yml`)
 
-- Extracts the `Deadline-10.4.2.3-linux-installers.tar` installer archive from `/mnt/aslon/06_Pipeline/Installers/deadline` directly into `/tmp` and runs the unattended remote client installer as root: connects to `aslon-deadline.alongsidegroup.com:4433` (certificate `/mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx`), launcher daemon runs as `deadline.user`, slave starts at boot. Skipped if `/opt/Thinkbox/Deadline10/Slave` already exists. Runs in `post-domain.yml` after the NFS mount.
+- Extracts the `Deadline-10.4.2.3-linux-installers.tar` installer archive from `/mnt/aslon/06_Pipeline/Installers/deadline` directly into `/tmp` and runs the unattended remote client installer as root: connects to `aslon-deadline.alongsidegroup.com:4433` (certificate `/mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx`), launcher daemon runs as `deadline.user`, slave starts at boot. Also writes `/opt/Thinkbox/Deadline10/bin/deadline.config` containing `export CLR_OPENSSL_VERSION_OVERRIDE=1.1` so the launcher uses the `compat-openssl11` libraries. Skipped if `/opt/Thinkbox/Deadline10/Slave` already exists. Runs in `post-domain.yml` after the NFS mount.
 
 ### Polkit Admin Rules (`13-polkit-admin.yml`)
 
