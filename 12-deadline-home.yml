@@ -5,15 +5,13 @@
   become: true
   vars:
     deadline_user: "deadline.user"
-    deadline_gid: 1260388865
 
   tasks:
     # Run after domain join + SSSD config so the AD user and mapped group resolve.
-    # Single idempotent task: creates the directory, then applies owner, group, and mode.
-    - name: Create /home/{{ deadline_user }} (owner {{ deadline_user }}, group {{ deadline_gid }}, mode 0700)
-      ansible.builtin.file:
-        path: "/home/{{ deadline_user }}"
-        state: directory
-        owner: "{{ deadline_user }}"
-        group: "{{ deadline_gid }}"
-        mode: "0700"
+    # mkhomedir_helper (oddjob-mkhomedir) creates the home directory, copies
+    # /etc/skel contents into it, and sets ownership in one idempotent call.
+    - name: Create /home/{{ deadline_user }} via mkhomedir_helper
+      ansible.builtin.command:
+        cmd: mkhomedir_helper {{ deadline_user }}
+      register: deadline_home
+      changed_when: "'already exists' not in deadline_home.stdout"

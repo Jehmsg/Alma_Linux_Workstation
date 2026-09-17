@@ -175,7 +175,7 @@ Append `-vvv` to any command for detailed output.
 
 ### General Packages (`05-packages.yml`)
 
-`bash`, `curl`, `dbus`, `perl`, `git`, `less`, `zsh`, `python3.11`, `htop`, `btop`, `firefox`, `ark`, `flatpak`, `gdb`, `cifs-utils`, `compat-openssl11`, `nfs-utils`, `rasdaemon`, `liberation-fonts`, `google-noto-fonts-common`, `google-noto-sans-fonts`, `dejavu-sans-fonts`, `dejavu-sans-mono-fonts`, `dejavu-serif-fonts`
+`bash`, `curl`, `dbus`, `perl`, `git`, `less`, `nano`, `zsh`, `python3.11`, `htop`, `btop`, `firefox`, `ark`, `flatpak`, `gdb`, `cifs-utils`, `compat-openssl11`, `nfs-utils`, `rasdaemon`, `liberation-fonts`, `google-noto-fonts-common`, `google-noto-sans-fonts`, `dejavu-sans-fonts`, `dejavu-sans-mono-fonts`, `dejavu-serif-fonts`
 
 ### Houdini / DCC Dependencies (`05-packages.yml`)
 
@@ -234,11 +234,11 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 
 ### Deadline Home (`12-deadline-home.yml`)
 
-- Creates `/home/deadline.user` with mode `0700`, owned by the AD user `deadline.user` and group `1260388865` (the AD group mapped into SSSD's idmap range). Runs in `post-domain.yml` after SSSD is configured so the user and group resolve.
+- Creates `/home/deadline.user` via `mkhomedir_helper` (from `oddjob-mkhomedir`), which creates the directory, copies `/etc/skel` contents in (including the `.bash_profile` deployed by `01-dotfiles.yml`), and sets ownership for the AD user. Runs in `post-domain.yml` after SSSD is configured so the user and group resolve.
 
 ### Deadline Client (`14-deadline.yml`)
 
-- Extracts the `Deadline-10.4.2.3-linux-installers.tar` installer archive from `/mnt/aslon/06_Pipeline/Installers/deadline` directly into `/tmp` and runs the unattended remote client installer as root: connects to `aslon-deadline.alongsidegroup.com:4433` (certificate `/mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx`), launcher daemon runs as `deadline.user`, slave starts at boot. Also writes `/opt/Thinkbox/Deadline10/bin/deadline.config` containing `export CLR_OPENSSL_VERSION_OVERRIDE=1.1` so the launcher uses the `compat-openssl11` libraries. Skipped if `/opt/Thinkbox/Deadline10/Slave` already exists. Runs in `post-domain.yml` after the NFS mount.
+- Extracts the `Deadline-10.4.2.3-linux-installers.tar` installer archive from `/mnt/aslon/06_Pipeline/Installers/deadline` directly into `/tmp` and runs the unattended remote client installer as root: connects to `aslon-deadline.alongsidegroup.com:4433` (certificate `/mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx`), launcher daemon runs as `deadline.user`, slave starts at boot. Also writes `/opt/Thinkbox/Deadline10/bin/deadline.config` containing `export CLR_OPENSSL_VERSION_OVERRIDE=1.1` so the launcher uses the `compat-openssl11` libraries, and sets recursive ownership of the machine's worker directory (`/var/lib/Thinkbox/Deadline10/workers/<hostname>`) to `deadline.user:1260388865`. Install is skipped if `/opt/Thinkbox/Deadline10/Slave` already exists; the config and ownership tasks re-apply idempotently. Runs in `post-domain.yml` after the NFS mount.
 
 ### Polkit Admin Rules (`13-polkit-admin.yml`)
 
