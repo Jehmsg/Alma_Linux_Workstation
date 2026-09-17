@@ -16,6 +16,7 @@
           - perl
           - git
           - less
+          - nano
           - zsh
           - python3.11
           - htop

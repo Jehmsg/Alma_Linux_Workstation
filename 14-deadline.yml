@@ -12,6 +12,7 @@
     deadline_tarball: "/mnt/aslon/06_Pipeline/Installers/deadline/Deadline-{{ deadline_version }}-linux-installers.tar"
     deadline_installer: "/tmp/DeadlineClient-{{ deadline_version }}-linux-x64-installer.run"
     deadline_slave_dir: /opt/Thinkbox/Deadline10/Slave
+    deadline_worker_dir: "/var/lib/Thinkbox/Deadline10/workers/{{ inventory_hostname }}"
 
   tasks:
     # Idempotency guard: the unattended installer is not safe to re-run, so
@@ -46,3 +47,14 @@
         owner: root
         group: root
         mode: '0644'
+
+    # Runs after the install on purpose: the workers directory is created by
+    # the installer, so it cannot be owned from 12-deadline-home.yml (which
+    # runs first). Re-applies idempotently on every run.
+    - name: Set worker directory ownership to deadline.user:1260388865
+      ansible.builtin.file:
+        path: "{{ deadline_worker_dir }}"
+        state: directory
+        owner: "{{ deadline_daemonuser }}"
+        group: "1260388865"
+        recurse: yes
