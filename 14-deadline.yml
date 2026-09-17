@@ -37,3 +37,12 @@
       changed_when: deadline_install.rc == 0
       timeout: 1800
       when: not deadline_existing.stat.exists
+
+    - name: Write /opt/Thinkbox/Deadline10/bin/deadline.config (OpenSSL 1.1 override)
+      ansible.builtin.copy:
+        dest: /opt/Thinkbox/Deadline10/bin/deadline.config
+        content: |
+          export CLR_OPENSSL_VERSION_OVERRIDE=1.1
+        owner: root
+        group: root
+        mode: '0644'

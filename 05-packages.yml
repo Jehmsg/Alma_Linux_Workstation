@@ -25,6 +25,7 @@
           - flatpak
           - gdb
           - cifs-utils
+          - compat-openssl11
           - nfs-utils
           - rasdaemon
           - liberation-fonts
