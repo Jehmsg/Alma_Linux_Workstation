@@ -5,7 +5,6 @@
   become: true
   vars:
     deadline_user: "deadline.user"
-    deadline_gid: 1260388865
 
   tasks:
     # Run after domain join + SSSD config so the AD user and mapped group resolve.
@@ -16,11 +15,3 @@
         cmd: mkhomedir_helper {{ deadline_user }}
       register: deadline_home
       changed_when: "'already exists' not in deadline_home.stdout"
-
-    - name: Install .bash_profile for {{ deadline_user }}
-      ansible.builtin.copy:
-        src: Files/bash_profile
-        dest: "/home/{{ deadline_user }}/.bash_profile"
-        owner: "{{ deadline_user }}"
-        group: "{{ deadline_gid }}"
-        mode: "0644"

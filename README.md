@@ -234,7 +234,7 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 
 ### Deadline Home (`12-deadline-home.yml`)
 
-- Creates `/home/deadline.user` via `mkhomedir_helper` (from `oddjob-mkhomedir`), which creates the directory, copies `/etc/skel` contents in, and sets ownership for the AD user. Also copies `Files/bash_profile` into the home directory as `.bash_profile` (mode `0644`, owner `deadline.user`, group `1260388865`). Runs in `post-domain.yml` after SSSD is configured so the user and group resolve.
+- Creates `/home/deadline.user` via `mkhomedir_helper` (from `oddjob-mkhomedir`), which creates the directory, copies `/etc/skel` contents in (including the `.bash_profile` deployed by `01-dotfiles.yml`), and sets ownership for the AD user. Runs in `post-domain.yml` after SSSD is configured so the user and group resolve.
 
 ### Deadline Client (`14-deadline.yml`)
 
