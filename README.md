@@ -1,3 +1,4 @@
+testing
 # Rocky / Alma Linux VFX Workstation Setup
 
 An Ansible playbook collection for bootstrapping Linux workstations for VFX work. Uses `ansible-pull` so each machine configures itself directly from this repository — no central Ansible controller required.
@@ -152,8 +153,9 @@ Append `-vvv` to any command for detailed output.
 |---|---|---|
 | `Files/profile` | `/etc/profile` | System-wide environment variables |
 | `Files/bash_profile` | `/etc/skel/.bash_profile` | Default bash profile for new users |
-| `Files/umask.sh` | `/etc/profile.d/umask.sh` | System-wide umask setting |
 | `Files/rez.sh` | `/etc/profile.d/rez.sh` | Rez environment setup |
+
+- Sets `UMASK 002` in `/etc/login.defs` (login session default) and removes the legacy `/etc/profile.d/umask.sh` from previously provisioned machines.
 
 ### Repositories & Kernel (`02-repos-kernel.yml` + `03b-kernel-ml.yml`)
 
@@ -238,7 +240,7 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 
 ### Deadline Client (`14-deadline.yml`)
 
-- Extracts the `Deadline-10.4.2.3-linux-installers.tar` installer archive from `/mnt/aslon/06_Pipeline/Installers/deadline` directly into `/tmp` and runs the unattended remote client installer as root: connects to `aslon-deadline.alongsidegroup.com:4433` (certificate `/mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx`), launcher daemon runs as `deadline.user`, slave starts at boot. Also writes `/opt/Thinkbox/Deadline10/bin/deadline.config` containing `export CLR_OPENSSL_VERSION_OVERRIDE=1.1` so the launcher uses the `compat-openssl11` libraries, and sets recursive ownership of the machine's worker directory (`/var/lib/Thinkbox/Deadline10/workers/<hostname>`) to `deadline.user:1260388865`. Install is skipped if `/opt/Thinkbox/Deadline10/Slave` already exists; the config and ownership tasks re-apply idempotently. Runs in `post-domain.yml` after the NFS mount.
+- Extracts the `Deadline-10.4.2.3-linux-installers.tar` installer archive from `/mnt/aslon/06_Pipeline/Installers/deadline` directly into `/tmp` and runs the unattended remote client installer as root: connects to `aslon-deadline.alongsidegroup.com:4433` (certificate `/mnt/aslon/06_Pipeline/DeadlineRepo/Deadline10RemoteClient.pfx`), launcher daemon runs as `deadline.user`, slave starts at boot. Also writes `/opt/Thinkbox/Deadline10/bin/deadline.config` containing `export CLR_OPENSSL_VERSION_OVERRIDE=1.1` so the launcher uses the `compat-openssl11` libraries, sets recursive ownership of the machine's worker directory (`/var/lib/Thinkbox/Deadline10/workers/<hostname>`) to `deadline.user:1260388865`, and re-points `deadline10launcher.service` from `After=network.target` to `After=mnt-aslon.mount` (with a daemon-reload) so the launcher waits for the ASLON NFS share — the pfx proxy certificate is read from it at startup. Install is skipped if `/opt/Thinkbox/Deadline10/Slave` already exists.
 
 ### Polkit Admin Rules (`13-polkit-admin.yml`)
 
@@ -269,9 +271,7 @@ After applying changes, SSSD is stopped, all cache files are flushed, and the se
 ├── 14-deadline.yml             # Deadline remote client install (run after domain join + NFS)
 ├── post-domain.yml             # Post-domain tasks (SSSD + NFS + deadline home + Deadline client + polkit, requires domain join)
 ├── Files/                      # Config files deployed to the system
-│   ├── profile                 # /etc/profile
 │   ├── bash_profile            # /etc/skel/.bash_profile
-│   ├── umask.sh                # /etc/profile.d/umask.sh
 │   ├── rez.sh                  # /etc/profile.d/rez.sh
 │   └── resolv.conf             # DNS resolver config
 ├── local.yml                   # Legacy monolithic playbook (deprecated)

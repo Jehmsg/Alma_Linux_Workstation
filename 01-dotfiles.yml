@@ -21,13 +21,17 @@
         group: root
         mode: '0644'
 
-    - name: Deploy /etc/profile.d/umask.sh
-      copy:
-        src: Files/umask.sh
-        dest: /etc/profile.d/umask.sh
-        owner: root
-        group: root
-        mode: '0644'
+    - name: Remove legacy /etc/profile.d/umask.sh (umask now set via /etc/login.defs)
+      file:
+        path: /etc/profile.d/umask.sh
+        state: absent
+
+    - name: Set UMASK to 002 in /etc/login.defs
+      lineinfile:
+        path: /etc/login.defs
+        regexp: '^UMASK'
+        line: 'UMASK           002'
+        state: present
 
     - name: Deploy /etc/profile.d/rez.sh
       copy:

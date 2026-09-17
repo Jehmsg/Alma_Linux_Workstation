@@ -39,6 +39,23 @@
       timeout: 1800
       when: not deadline_existing.stat.exists
 
+    # The installer ships deadline10launcher.service ordered only after
+    # network.target, which does not guarantee /mnt/aslon is mounted (the
+    # pfx proxy certificate lives on the share). Re-pin it to the mount
+    # unit; lineinfile is idempotent, so this stays correct on re-runs.
+    - name: Order deadline10launcher.service after mnt-aslon.mount
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/system/deadline10launcher.service
+        regexp: '^After='
+        line: After=mnt-aslon.mount
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd daemon for deadline10launcher.service
+      ansible.builtin.systemd:
+        daemon_reload: true
+
     - name: Write /opt/Thinkbox/Deadline10/bin/deadline.config (OpenSSL 1.1 override)
       ansible.builtin.copy:
         dest: /opt/Thinkbox/Deadline10/bin/deadline.config
