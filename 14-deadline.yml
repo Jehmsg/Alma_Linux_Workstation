@@ -55,6 +55,6 @@
       ansible.builtin.file:
         path: "{{ deadline_worker_dir }}"
         state: directory
-        owner: "{{ deadline_daemonuser }}"
+        owner: deadline.user
         group: "1260388865"
         recurse: yes
