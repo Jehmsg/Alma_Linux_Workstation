@@ -75,3 +75,32 @@
         owner: deadline.user
         group: "1260388865"
         recurse: yes
+
+    # The Deadline 10 remote client launcher (deadline10launcher) listens on
+    # 5055/tcp for remote slave requests from the Monitor. Open it permanently
+    # in firewalld and apply it to the running zone immediately.
+    - name: Open Deadline launcher port 5055/tcp in firewalld
+      ansible.posix.firewalld:
+        port: 5055/tcp
+        permanent: true
+        immediate: true
+        state: enabled
+
+    # Menu shortcut for the GUI monitor. Idempotent copy, re-applied on
+    # every run (same pattern as the deadline.config task above).
+    - name: Create Deadline Monitor desktop entry
+      ansible.builtin.copy:
+        dest: /usr/local/share/applications/deadlinemonitor10.desktop
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Version=0.9.4
+          Name=Deadline Monitor
+          Comment=Launch the Deadline Monitor
+          Icon=/opt/Thinkbox/Deadline10/icons/Deadline_Monitor.png
+          Exec=/opt/Thinkbox/Deadline10/bin/deadlinemonitor
+          Terminal=false
+          Path=/opt/Thinkbox/Deadline10/bin
+        owner: root
+        group: root
+        mode: '0644'
