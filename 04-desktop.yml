@@ -12,6 +12,19 @@
           - '@base-x'
         state: present
 
+    - name: Detect installed kdeconnect packages
+      ansible.builtin.shell: |
+        rpm -q kdeconnect kdeconnectd 2>/dev/null | grep '^kde' || true
+      register: kdeconnect_pkgs
+      changed_when: false
+      failed_when: false
+
+    - name: Remove kdeconnect (broken, throws constant errors)
+      dnf:
+        name: "{{ kdeconnect_pkgs.stdout_lines }}"
+        state: absent
+      when: kdeconnect_pkgs.stdout_lines
+
 
     - name: Set graphical target as default
       ansible.builtin.file:
