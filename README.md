@@ -177,7 +177,7 @@ Append `-vvv` to any command for detailed output.
 
 ### General Packages (`05-packages.yml`)
 
-`bash`, `curl`, `dbus`, `perl`, `git`, `less`, `nano`, `zsh`, `python3.11`, `htop`, `btop`, `firefox`, `ark`, `flatpak`, `gdb`, `cifs-utils`, `compat-openssl11`, `nfs-utils`, `rasdaemon`, `liberation-fonts`, `google-noto-fonts-common`, `google-noto-sans-fonts`, `dejavu-sans-fonts`, `dejavu-sans-mono-fonts`, `dejavu-serif-fonts`
+`bash`, `curl`, `dbus`, `perl`, `git`, `less`, `nano`, `zsh`, `python3.11`, `htop`, `btop`, `tmux`, `firefox`, `ark`, `flatpak`, `gdb`, `cifs-utils`, `compat-openssl11`, `nfs-utils`, `rasdaemon`, `liberation-fonts`, `google-noto-fonts-common`, `google-noto-sans-fonts`, `dejavu-sans-fonts`, `dejavu-sans-mono-fonts`, `dejavu-serif-fonts`
 
 ### Houdini / DCC Dependencies (`05-packages.yml`)
 

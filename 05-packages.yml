@@ -21,6 +21,7 @@
           - python3.11
           - htop
           - btop
+          - tmux
           - firefox
           - ark
           - flatpak
