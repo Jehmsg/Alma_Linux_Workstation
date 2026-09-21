@@ -39,6 +39,23 @@
       timeout: 1800
       when: not deadline_existing.stat.exists
 
+    # The installer ships deadline10launcher.service ordered only after
+    # network.target, which does not guarantee /mnt/aslon is mounted (the
+    # pfx proxy certificate lives on the share). Re-pin it to the mount
+    # unit; lineinfile is idempotent, so this stays correct on re-runs.
+    - name: Order deadline10launcher.service after mnt-aslon.mount
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/system/deadline10launcher.service
+        regexp: '^After='
+        line: After=mnt-aslon.mount
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd daemon for deadline10launcher.service
+      ansible.builtin.systemd:
+        daemon_reload: true
+
     - name: Write /opt/Thinkbox/Deadline10/bin/deadline.config (OpenSSL 1.1 override)
       ansible.builtin.copy:
         dest: /opt/Thinkbox/Deadline10/bin/deadline.config
@@ -58,3 +75,32 @@
         owner: deadline.user
         group: "1260388865"
         recurse: yes
+
+    # The Deadline 10 remote client launcher (deadline10launcher) listens on
+    # 5055/tcp for remote slave requests from the Monitor. Open it permanently
+    # in firewalld and apply it to the running zone immediately.
+    - name: Open Deadline launcher port 5055/tcp in firewalld
+      ansible.posix.firewalld:
+        port: 5055/tcp
+        permanent: true
+        immediate: true
+        state: enabled
+
+    # Menu shortcut for the GUI monitor. Idempotent copy, re-applied on
+    # every run (same pattern as the deadline.config task above).
+    - name: Create Deadline Monitor desktop entry
+      ansible.builtin.copy:
+        dest: /usr/local/share/applications/deadlinemonitor10.desktop
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Version=0.9.4
+          Name=Deadline Monitor
+          Comment=Launch the Deadline Monitor
+          Icon=/opt/Thinkbox/Deadline10/icons/Deadline_Monitor.png
+          Exec=/opt/Thinkbox/Deadline10/bin/deadlinemonitor
+          Terminal=false
+          Path=/opt/Thinkbox/Deadline10/bin
+        owner: root
+        group: root
+        mode: '0644'
