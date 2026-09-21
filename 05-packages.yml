@@ -53,6 +53,7 @@
           - fontconfig
           - glib2
           - glibc
+          - libatomic
           - libcurl
           - libdrm
           - libgcc
