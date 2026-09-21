@@ -8,7 +8,7 @@
     rez_dir: /opt/rez
     rez_cache_dir: "{{ rez_dir }}/package_cache"
     rez_python_version: "python3.11"
-    rez_group: artists
+    rez_group: "1260389472"
     rez_download_url: "https://github.com/AcademySoftwareFoundation/rez/releases/download/{{ rez_version }}/{{ rez_version }}.tar.gz"
     rez_download_dir: /tmp
 

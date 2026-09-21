@@ -296,7 +296,7 @@ vars:
 The playbook includes a `group` setting for the package cache directory. Edit in `06-rez.yml`:
 
 ```yaml
-rez_group: artists
+rez_group: "1260389472"
 ```
 
 ### NFS Mount
