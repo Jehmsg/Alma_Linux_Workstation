@@ -42,3 +42,13 @@
         - { key: MinimumUid, value: '99999' }
         - { key: MaximumUid, value: '99999' }
         - { key: RememberLastUser, value: 'false' }
+
+    - name: Default display server to X11
+      ansible.builtin.copy:
+        dest: /etc/sddm.conf.d/10-display-server-x11.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          [General]
+          DisplayServer=x11
